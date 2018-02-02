@@ -33,7 +33,7 @@ if ($message == "/chat") {
 	sendMessage($chat_id, $chat_id);
 }
 
-if ($source == "ACR") {
+if ($phone) {
 	sendMessage("197416875", "Звонок: ".$phone);	
 }
 
