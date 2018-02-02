@@ -34,7 +34,7 @@ if ($message == "/chat") {
 }
 
 if ($message == "/output") {
-	sendMessage($chat_id, $output);	
+	sendMessage($chat_id, json_decode($output));	
 }
 
 //----------------------------------------------------------------------------------------------------------------------------------//
