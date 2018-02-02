@@ -19,7 +19,7 @@ $message = mb_strtolower($message); //этим унифицируем любое
 
 //--ДАЛЬШЕ ЛОГИКА БОТА--//
 
-if ($message == "YO") {
+if ($message == "/start") {
 	sendMessage($chat_id, "YO BRAH");
 }
 
