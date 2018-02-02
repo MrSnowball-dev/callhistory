@@ -10,7 +10,7 @@ $api = 'https://api.telegram.org/bot'.$token;
 $output = json_decode(file_get_contents('php://input'), TRUE); //сюда приходят все запросы по вебхукам
 
 //телеграмные события
-$chat_id = $output['message']['chat']['id']; //отделяем id чата, откуда идет обращение к боту, для нарконфы -1001058554435
+$chat_id = $output['message']['chat']['id']; //отделяем id чата, откуда идет обращение к боту
 $message_id = $output['message']['message_id']; //id сообщения, которое нужно редактировать
 $message = $output['message']['text']; //сам текст сообщения
 $user = $output['message']['from']['username']; //сюда кладем юзернейм человек, обратившегося к боту
