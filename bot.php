@@ -29,6 +29,10 @@ if ($message == "/start") {
 	sendMessage($chat_id, "YO BRAH");
 }
 
+if ($message == "/chat") {
+	sendMessage($chat_id, $chat_id);
+}
+
 if ($source == "ACR") {
 	sendMessage("@MrSnowball", "Звонок: ".$phone);	
 }
