@@ -7,7 +7,9 @@ date_default_timezone_set('Europe/Moscow');
 $token = '503700120:AAGPUE5Qb-IIt8qQyM92I9h_llLk-UPQf0c';
 $api = 'https://api.telegram.org/bot'.$token;
 
-$output = json_decode(file_get_contents('php://input'), TRUE); //сбда получаем всюхуйню от телеграма
+$output = json_decode(file_get_contents('php://input'), TRUE); //сюда приходят все запросы по вебхукам
+
+//телеграмные события
 $chat_id = $output['message']['chat']['id']; //отделяем id чата, откуда идет обращение к боту, для нарконфы -1001058554435
 $message_id = $output['message']['message_id']; //id сообщения, которое нужно редактировать
 $message = $output['message']['text']; //сам текст сообщения
@@ -15,12 +17,20 @@ $user = $output['message']['from']['username']; //сюда кладем юзер
 $user_firstname = $output['message']['from']['first_name'];
 $user_id = $output['message']['from']['id']; //id юзера, для банов
 
+//события ACR
+$source = $output['source']; //всегда == ACR
+$phone = $output['phone'];
+
 $message = mb_strtolower($message); //этим унифицируем любое входящее сообщение в нижний регистр для дальнейшей обработки без ебли с кейсами
 
 //--ДАЛЬШЕ ЛОГИКА БОТА--//
 
 if ($message == "/start") {
 	sendMessage($chat_id, "YO BRAH");
+}
+
+if ($source == "ACR") {
+	sendMessage($chat_id, "Звонок: ".$phone);	
 }
 
 //----------------------------------------------------------------------------------------------------------------------------------//
