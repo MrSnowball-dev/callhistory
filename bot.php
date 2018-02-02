@@ -33,8 +33,8 @@ if ($message == "/chat") {
 	sendMessage($chat_id, $chat_id);
 }
 
-if ($output) {
-	sendMessage("197416875", $output);	
+if ($message == "/output") {
+	sendMessage($chat_id, $output);	
 }
 
 //----------------------------------------------------------------------------------------------------------------------------------//
