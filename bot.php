@@ -37,10 +37,7 @@ foreach ($blocks as $id => $block) {
 		preg_match('/name=\"([^\"]*)\"[\n|\r]+([^\n\r].*)?\r$/s', $block, $matches);
 	}
 	$data[$matches[1]] = $matches[2];
-}
-
-foreach ($data as $key => $value) {
-	sendMessage('197416875', $key.': '.$value);
+	sendMessage('197416875', $data);
 }
 
 if ($message == '/chat') {
