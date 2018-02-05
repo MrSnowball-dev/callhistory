@@ -20,6 +20,7 @@ $user_id = $output['message']['from']['id']; //id юзера, для банов
 //события ACR
 $source = $output['source']; //всегда == ACR
 $phone = $output['phone'];
+$secret = $output['secret'];
 
 $message = mb_strtolower($message); //этим унифицируем любое входящее сообщение в нижний регистр для дальнейшей обработки без ебли с кейсами
 
@@ -33,10 +34,15 @@ if ($message == "/chat") {
 	sendMessage($chat_id, $chat_id);
 }
 
-foreach ($output as $key => $value) {
-	sendMessage('197416875', $key.': '.$value.'; ');	
+if (array_key_exists('source', $output)) {
+	foreach ($output as $key => $value) {
+		if (is_array($value)){
+			sendMessage('197416875', 'arr.'.$key.':');
+		} else {
+			sendMessage('197416875', $key.': '.$value.'; ');
+		}
+	}
 }
-
 
 //----------------------------------------------------------------------------------------------------------------------------------//
 
