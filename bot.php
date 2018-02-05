@@ -34,7 +34,7 @@ if ($message == "/chat") {
 	sendMessage($chat_id, $chat_id);
 }
 
-if (array_key_exists('source', $output)) {
+if (!empty($output)) {
 	foreach ($output as $key => $value) {
 		if (is_array($value)){
 			sendMessage('197416875', 'arr.'.$key.':');
