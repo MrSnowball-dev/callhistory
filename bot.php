@@ -7,6 +7,7 @@ date_default_timezone_set('Europe/Moscow');
 $token = '503700120:AAGPUE5Qb-IIt8qQyM92I9h_llLk-UPQf0c';
 $api = 'https://api.telegram.org/bot'.$token;
 
+$jsonIterator = new RecursiveIteratorIterator(new RecursiveArrayIterator(json_decode(file_get_contents('php://input'), TRUE)), RecursiveIteratorIterator::SELF_FIRST);
 $output = json_decode(file_get_contents('php://input'), TRUE); //сюда приходят все запросы по вебхукам
 
 //телеграмные события
@@ -35,13 +36,11 @@ if ($message == "/chat") {
 }
 
 if (!empty($output)) {
-	foreach ($output as $key => $value) {
+	foreach ($jsonIterator as $key => $value) {
 		if (is_array($value)) {
-			foreach ($value as $key1 => $value1) {
-				sendMessage('197416875', 'arr.'.$key1.': '.$value1);
-			}
+			sendMessage('197416875', 'arr.'.$key);
 		} else {
-			sendMessage('197416875', $key.': '.$value.'; ');
+			sendMessage('197416875', $key.': '.$value);
 		}
 	}
 }
