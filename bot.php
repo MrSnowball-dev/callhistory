@@ -35,7 +35,7 @@ if ($message == "/chat") {
 
 if ($output) {
 	foreach (json_decode($output, TRUE) as $key => $value) {
-		sendMessage('197416875', $key.': '$value);	
+		sendMessage('197416875', $key.': '.$value);	
 	}
 }
 
