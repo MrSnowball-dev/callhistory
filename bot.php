@@ -34,8 +34,9 @@ if ($message == "/chat") {
 }
 
 if ($output) {
-	$json_dec = json_decode($output, TRUE);
-	sendMessage($chat_id, implode(';', $json_dec));	
+	foreach (json_decode($output, TRUE) as $key => $value) {
+		sendMessage('197416875', $key.': '$value);	
+	}
 }
 
 //----------------------------------------------------------------------------------------------------------------------------------//
