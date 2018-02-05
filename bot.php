@@ -23,7 +23,9 @@ $message = mb_strtolower($message); //этим унифицируем любое
 //--ДАЛЬШЕ ЛОГИКА БОТА--//
 
 preg_match('/boundary=(.*)$/', $_SERVER['CONTENT_TYPE'], $matches);
+sendMessage('197416875', $matches);
 $blocks = preg_split("/-+$boundary", $input);
+sendMessage('197416875', $blocks);
 array_pop($blocks);
 
 foreach ($blocks as $id => $block) {
