@@ -34,10 +34,12 @@ if ($message == "/chat") {
 	sendMessage($chat_id, $chat_id);
 }
 
-if (!empty($output)) {
+if (array_key_exists('source', $output)) {
 	foreach ($output as $key => $value) {
-		if (is_array($value)){
-			sendMessage('197416875', 'arr.'.$key.':');
+		if (is_array($value)) {
+			foreach ($value as $key1 => $value1) {
+				sendMessage('197416875', 'arr.'.$key1.': '.$value1);
+			}
 		} else {
 			sendMessage('197416875', $key.': '.$value.'; ');
 		}
@@ -50,12 +52,6 @@ if (!empty($output)) {
 function sendFormattedMessage($chat_id, $message, $markup)
 {
 	file_get_contents($GLOBALS['api'].'/sendMessage?chat_id='.$chat_id.'&text='.urlencode($message).'&parse_mode='.$markup);
-}
-
-//редактирование сообщения
-function updateMessage($chat_id, $message_id, $new_message)
-{
-	file_get_contents($GLOBALS['api'].'/editMessageText?chat_id='.$chat_id.'&message_id='.$message_id.'&text='.urlencode($new_message));
 }
 
 //удаление сообщения
