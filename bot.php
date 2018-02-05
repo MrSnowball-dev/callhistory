@@ -1,6 +1,5 @@
 <?php
 echo '<script>console.log(\'Start script\')</script>';
-header('Content-Type: text/html; charset=utf-8');
 
 date_default_timezone_set('Europe/Moscow');
 
@@ -19,9 +18,6 @@ $user_firstname = $output['message']['from']['first_name'];
 $user_id = $output['message']['from']['id']; //id юзера, для банов
 
 //события ACR
-$source = $output['source']; //всегда == ACR
-$phone = $output['phone'];
-$secret = $output['secret'];
 
 $message = mb_strtolower($message); //этим унифицируем любое входящее сообщение в нижний регистр для дальнейшей обработки без ебли с кейсами
 
