@@ -1,6 +1,4 @@
 <?php
-date_default_timezone_set('Europe/Moscow');
-
 $token = '503700120:AAGPUE5Qb-IIt8qQyM92I9h_llLk-UPQf0c';
 $api = 'https://api.telegram.org/bot'.$token;
 
