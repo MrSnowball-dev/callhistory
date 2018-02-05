@@ -2,8 +2,8 @@
 $token = '503700120:AAGPUE5Qb-IIt8qQyM92I9h_llLk-UPQf0c';
 $api = 'https://api.telegram.org/bot'.$token;
 
-$jsonIterator = new RecursiveIteratorIterator(new RecursiveArrayIterator(parse_str(file_get_contents('php://input'))), RecursiveIteratorIterator::SELF_FIRST);
 $output = json_decode(file_get_contents('php://input'), TRUE); //сюда приходят все запросы по вебхукам
+$jsonIterator = new RecursiveIteratorIterator(new RecursiveArrayIterator(parse_str(file_get_contents('php://input'))), RecursiveIteratorIterator::SELF_FIRST);
 
 //телеграмные события
 $chat_id = $output['message']['chat']['id']; //отделяем id чата, откуда идет обращение к боту
