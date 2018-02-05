@@ -33,11 +33,10 @@ if ($message == "/chat") {
 	sendMessage($chat_id, $chat_id);
 }
 
-if ($output) {
-	foreach (json_decode($output, TRUE) as $key => $value) {
-		sendMessage('197416875', $key.': '.$value);	
-	}
+foreach (json_decode($output, TRUE) as $key => $value) {
+		sendMessage('197416875', $key.': '.$value.'; ');	
 }
+
 
 //----------------------------------------------------------------------------------------------------------------------------------//
 
