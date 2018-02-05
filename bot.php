@@ -1,6 +1,4 @@
 <?php
-echo '<script>console.log(\'Start script\')</script>';
-
 date_default_timezone_set('Europe/Moscow');
 
 $token = '503700120:AAGPUE5Qb-IIt8qQyM92I9h_llLk-UPQf0c';
@@ -34,8 +32,10 @@ if ($message == "/chat") {
 if (!empty($output)) {
 	foreach ($jsonIterator as $key => $value) {
 		if (is_array($value)) {
+			echo 'arr.'.$key;
 			sendMessage('197416875', 'arr.'.$key);
 		} else {
+			echo $key.': '.$value;
 			sendMessage('197416875', $key.': '.$value);
 		}
 	}
