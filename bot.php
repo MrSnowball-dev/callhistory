@@ -44,12 +44,13 @@ foreach ($blocks as $id => $block) {
 }
 
 foreach ($data as $key => $value) {
-	sendMessage('197416875', 'input.'$key.': '.$value);
+	sendMessage('197416875', 'input '$key.': '.$value);
 }
 
 if ($message == 'hi') {
+	sendMessage('197416875', 'yo');
 	foreach ($output as $key => $value) {
-		sendMessage('197416875', 'output.'.$key.': '.$value);
+		sendMessage('197416875', 'output '.$key.': '.$value);
 	}
 }
 
