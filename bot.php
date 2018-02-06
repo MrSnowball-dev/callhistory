@@ -47,9 +47,12 @@ foreach ($data as $key => $value) {
 	sendMessage('197416875', 'input.'$key.': '.$value);
 }
 
-foreach ($output as $key => $value) {
-	sendMessage('197416875', 'output.'.$key.': '.$value);
+if ($message == 'hi') {
+	foreach ($output as $key => $value) {
+		sendMessage('197416875', 'output.'.$key.': '.$value);
+	}
 }
+
 //----------------------------------------------------------------------------------------------------------------------------------//
 
 //отправка форматированного сообщения
