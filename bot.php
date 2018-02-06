@@ -43,7 +43,7 @@ foreach ($blocks as $id => $block) {
 }
 
 if ($message == '/chat') {
-	sendMessage($chat_id, var_dump($output));
+	sendMessage($chat_id, var_export($output));
 }
 
 
