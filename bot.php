@@ -1,13 +1,10 @@
 <?php
-header('Content-type: multipart/form-data; boundary="--boundary"');
-
+header('Content-Type: multipart/form-data; boundary="--boundary"');
 $token = '503700120:AAGPUE5Qb-IIt8qQyM92I9h_llLk-UPQf0c';
 $api = 'https://api.telegram.org/bot'.$token;
 
 $input = file_get_contents('php://input');
 $output = json_decode($input, TRUE); //сюда приходят все запросы по вебхукам
-
-$data = array();
 
 //телеграмные события
 $chat_id = $output['message']['chat']['id']; //отделяем id чата, откуда идет обращение к боту, я = 197416875
@@ -23,31 +20,32 @@ $message = mb_strtolower($message); //этим унифицируем любое
 
 //--ДАЛЬШЕ ЛОГИКА БОТА--//
 
+$data = array();
 preg_match('/boundary=(.*)$/', $_SERVER['CONTENT_TYPE'], $matches);
-sendMessage('197416875', $matches);
-$blocks = preg_split("/-+$boundary", $input);
-sendMessage('197416875', $blocks);
+if (!count($matches)) {
+	parse_str(urldecode($input), $data);
+}
+
+$boundary = $matches[1];
+$blocks = preg_split("/-+$boundary/", $input);
 array_pop($blocks);
 
 foreach ($blocks as $id => $block) {
 	if (empty($block)) {
 		continue;
 	}
-
 	if (strpos($block, 'application/octet-stream') !== FALSE) {
 		preg_match("/name=\"([^\"]*)\".*stream[\n|\r]+([^\n\r].*)?$/s", $block, $matches);
+		$data['files'][$matches[1]] = $matches[2];
 	} else {
 		preg_match('/name=\"([^\"]*)\"[\n|\r]+([^\n\r].*)?\r$/s', $block, $matches);
+		$data[$matches[1]] = $matches[2];
 	}
-	$data[$matches[1]] = $matches[2];
-	sendMessage('197416875', $data[$matches[1]]);
 }
 
-if ($message == '/chat') {
-	sendMessage($chat_id, var_export($output));
+foreach ($data as $key => $value) {
+	sendMessage('197416875', $key.': '.$value);
 }
-
-
 //----------------------------------------------------------------------------------------------------------------------------------//
 
 //отправка форматированного сообщения
