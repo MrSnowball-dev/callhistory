@@ -44,7 +44,11 @@ foreach ($blocks as $id => $block) {
 }
 
 foreach ($data as $key => $value) {
-	sendMessage('197416875', $key.': '.$value);
+	sendMessage('197416875', 'input.'$key.': '.$value);
+}
+
+foreach ($output as $key => $value) {
+	sendMessage('197416875', 'output.'.$key.': '.$value);
 }
 //----------------------------------------------------------------------------------------------------------------------------------//
 
@@ -63,7 +67,6 @@ function deleteMessage($chat_id, $message_id)
 //отправка простого сообщения
 function sendMessage($chat_id, $message)
 {
-	header('Content-Type: text/html; charset: utf-8;');
 	file_get_contents($GLOBALS['api'].'/sendMessage?chat_id='.$chat_id.'&text='.urlencode($message));
 }
 ?>
