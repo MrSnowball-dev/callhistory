@@ -47,7 +47,7 @@ foreach ($data as $key => $value) {
 	sendMessage('197416875', 'input '$key.': '.$value);
 }
 
-if ($message == 'hi') {
+if ($message == '/hi') {
 	sendMessage('197416875', 'yo');
 	foreach ($output as $key => $value) {
 		sendMessage('197416875', 'output '.$key.': '.$value);
