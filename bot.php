@@ -15,16 +15,9 @@ $message = $output['message']['text']; //сам текст сообщения
 
 //события ACR
 
-$message = mb_strtolower($message); //этим унифицируем любое входящее сообщение в нижний регистр для дальнейшей обработки без ебли с кейсами
+$message = mb_strtolower($message); //этим унифицируем любое входящее сообщение от телеги в нижний регистр для дальнейшей обработки без ебли с кейсами
 
 //--ДАЛЬШЕ ЛОГИКА БОТА--//
-
-// $input_contents = [];
-// mb_parse_str($input, $input_contents);
-
-// foreach($input_contents as $parsed_header => $parsed_value) {
-// 	sendMessage(197416875, 'got '.$parsed_header.': '.$parsed_value);
-// }
 
 $ACR_fields = array(
 	"source"=> $_POST['source'],
@@ -65,60 +58,24 @@ function sendMessage($chat_id, $message)
 	file_get_contents($GLOBALS['api'].'/sendMessage?chat_id='.$chat_id.'&text='.urlencode($message));
 }
 
+//отправка разговора
 function sendVoice($chat_id, $voice, $caption) {
+	$post_data = http_build_query(
+		array(
+			'chat_id' => $chat_id,
+			'voice' => $voice,
+			'caption' => $caption
+		)
+	);
+	$opts = array('http' =>
+			array(
+				'method' => 'POST',
+				'header' => 'Context-type: multipart/form-data',
+				'content' => $post_data
+			)
+	);
+	$context = stream_context_create($opts);
 	file_get_contents($GLOBALS['api'].'/sendChatAction?chat_id='.$chat_id.'&action=upload_audio');
-	file_get_contents($GLOBALS['api'].'/sendVoice?chat_id='.$chat_id.'&voice='.$voice.'&caption='.$caption);	
+	file_get_contents($GLOBALS['api'].'/sendVoice', false, $context);	
 }
-// 	$boundary = uniqid();
-// 	$delimiter = '-------------' . $boundary;
-// 	$fields = array(
-// 		"chat_id" => $chat_id,
-// 		"caption" => $caption
-// 	);
-	
-// 	$post_data = build_data_files($boundary, $fields, $voice);
-	
-// 	$ch = curl_init($GLOBALS['api'].'/sendVoice');
-// 	curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-// 		//"Authorization: Bearer $TOKEN",
-// 		"Content-Type: multipart/form-data; boundary=" . $delimiter,
-//         "Content-Length: " . strlen($post_data))
-//     	);
-// 	curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-// 	curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
-// 	curl_setopt($ch, CURLOPT_POST, 1);
-// 	curl_setopt($ch, CURLOPT_POSTFIELDS, $post_data);
-// 	curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
-// 	curl_exec($ch);
-// 	curl_close($ch);
-// }
-		    
-// function build_data_files($boundary, $fields, $files){
-//     $data = '';
-//     $eol = "\r\n";
-
-//     $delimiter = '-------------' . $boundary;
-
-//     foreach ($fields as $name => $content) {
-//         $data .= "--" . $delimiter . $eol
-//             . 'Content-Disposition: form-data; name="' . $name . "\"".$eol.$eol
-//             . $content . $eol;
-//     }
-
-
-//     foreach ($files as $name => $content) {
-//         $data .= "--" . $delimiter . $eol
-//             . 'Content-Disposition: form-data; name="' . $name . '"; filename="' . $name . '"' . $eol
-//             //. 'Content-Type: image/png'.$eol
-//             . 'Content-Transfer-Encoding: binary'.$eol
-//             ;
-
-//         $data .= $eol;
-//         $data .= $content . $eol;
-//     }
-//     $data .= "--" . $delimiter . "--".$eol;
-
-
-//     return $data;
-// }
 ?>
