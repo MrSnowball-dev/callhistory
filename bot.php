@@ -1,4 +1,5 @@
 <?php
+header('Content-Type: text/html; charset=utf-8');
 $token = '503700120:AAGxJuN9CMFqNjQ2lOsLvtb79T-Llz3H130';
 $api = 'https://api.telegram.org/bot'.$token;
 
@@ -19,8 +20,8 @@ $message = mb_strtolower($message); //этим унифицируем любое
 $input_contents = [];
 mb_parse_str($input, $input_contents);
 
-foreach($input_contents as $parsed) {
-	sendMessage(197416875, $parsed);
+foreach($input_contents as $parsed_header => $parsed_value) {
+	sendMessage(197416875, 'got '.$parsed_header.': '.$parsed_value);
 }
 
 //----------------------------------------------------------------------------------------------------------------------------------//
@@ -40,11 +41,10 @@ function deleteMessage($chat_id, $message_id)
 //отправка простого сообщения
 function sendMessage($chat_id, $message)
 {
-	header('Content-Type: text/html; charset=utf-8');
 	file_get_contents($GLOBALS['api'].'/sendMessage?chat_id='.$chat_id.'&text='.urlencode($message));
 }
 
-function sendVoice() {
+// function sendVoice() {
 	
-}
+// }
 ?>
