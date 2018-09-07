@@ -1,4 +1,7 @@
 <?php
+
+require_once 'vendor/autoload.php';
+
 $token = '503700120:AAGxJuN9CMFqNjQ2lOsLvtb79T-Llz3H130';
 $api = 'https://api.telegram.org/bot'.$token;
 
