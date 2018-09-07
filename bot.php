@@ -41,7 +41,7 @@ $ACR_fields = array(
 
 if ($ACR_fields['source'] == 'ACR') {
 	$voice_file = $_FILES['file'];
-	sendMessage(197416875, $ACR_fields['acrfilename'].', '.$ACR_fields['date'].', '.$ACR_fields['contact'].', '.$ACR_fields['phone'].', '.$ACR_fields['direction'].', '.$ACR_fields['duration'].', ');
+	sendMessage(197416875, $ACR_fields['acrfilename'].', '.$ACR_fields['date'].', '.$ACR_fields['contact'].', '.$ACR_fields['phone'].', '.$ACR_fields['direction'].', '.$ACR_fields['duration']);
 	sendVoice(197416875, $voice_file, $_POST['phone']);
 }
 
@@ -67,7 +67,7 @@ function sendMessage($chat_id, $message)
 
 function sendVoice($chat_id, $voice, $caption) {
 	file_get_contents($GLOBALS['api'].'/sendChatAction?chat_id='.$chat_id.'&action=upload_audio');
-	file_get_contents($GLOBALS['api'].'/sendAudio?chat_id='.$chat_id.'&audio='.$voice.'&caption='.$caption);	
+	file_get_contents($GLOBALS['api'].'/sendVoice?chat_id='.$chat_id.'&voice='.$voice.'&caption='.$caption.'&duration='.$ACR_fields['duration']/1000);	
 }
 // 	$boundary = uniqid();
 // 	$delimiter = '-------------' . $boundary;
