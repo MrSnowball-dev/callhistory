@@ -26,8 +26,20 @@ $message = mb_strtolower($message); //этим унифицируем любое
 // 	sendMessage(197416875, 'got '.$parsed_header.': '.$parsed_value);
 // }
 
-$post_test = $_POST['source'];
-if ($post_test == 'ACR') {
+$ACR_fields = array(
+	"source"=> $_POST['source'],
+	"acrfilename"=> $_POST['acrfilename'],
+	"secret"=> $_POST['secret'],
+	"date"=> $_POST['date'],
+	"duration"=> $_POST['duration'],
+	"direction"=> $_POST['direction'],
+	"important_flag"=> $_POST['important'],
+	"note"=> $_POST['note'],
+	"phone"=> $_POST['phone'],
+	"contact"=> $_POST['contact']
+);
+
+if ($ACR_fields['source'] == 'ACR') {
 	$voice_file = $_FILES['file'];
 	sendMessage(197416875, 'TEST, '.$_FILES['file']['name']);
 	sendVoice(197416875, $voice_file, $_POST['phone']);
@@ -54,19 +66,56 @@ function sendMessage($chat_id, $message)
 }
 
 function sendVoice($chat_id, $voice, $caption) {
-	$cfile = new CURLFile($voice);
-	$data = [
-		'chat_id' => $chat_id,
-		'voice' => $cfile,
-		'caption' => $caption
-	];
+	$boundary = uniqid();
+	$delimiter = '-------------' . $boundary;
+	$fields = array(
+		"chat_id" => $chat_id,
+		"caption" => $caption
+	);
+	
+	$post_data = build_data_files($boundary, $fields, $voice);
+	
 	$ch = curl_init($GLOBALS['api'].'/sendVoice');
-	curl_setopt($ch, CURLOPT_HEADER, false);
+	curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+		//"Authorization: Bearer $TOKEN",
+		"Content-Type: multipart/form-data; boundary=" . $delimiter,
+        "Content-Length: " . strlen($post_data))
+    	);
 	curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+	curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
 	curl_setopt($ch, CURLOPT_POST, 1);
-	curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+	curl_setopt($ch, CURLOPT_POSTFIELDS, $post_data);
 	curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
 	curl_exec($ch);
 	curl_close($ch);
+}
+		    
+function build_data_files($boundary, $fields, $files){
+    $data = '';
+    $eol = "\r\n";
+
+    $delimiter = '-------------' . $boundary;
+
+    foreach ($fields as $name => $content) {
+        $data .= "--" . $delimiter . $eol
+            . 'Content-Disposition: form-data; name="' . $name . "\"".$eol.$eol
+            . $content . $eol;
+    }
+
+
+    foreach ($files as $name => $content) {
+        $data .= "--" . $delimiter . $eol
+            . 'Content-Disposition: form-data; name="' . $name . '"; filename="' . $name . '"' . $eol
+            //. 'Content-Type: image/png'.$eol
+            . 'Content-Transfer-Encoding: binary'.$eol
+            ;
+
+        $data .= $eol;
+        $data .= $content . $eol;
+    }
+    $data .= "--" . $delimiter . "--".$eol;
+
+
+    return $data;
 }
 ?>
