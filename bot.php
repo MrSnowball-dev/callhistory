@@ -24,8 +24,9 @@ $message = mb_strtolower($message); //этим унифицируем любое
 // }
 
 $post_test = $_POST['source'];
-if ($post_test) {
-	sendMessage(197416875, $post_test);
+if ($post_test == 'ACR') {
+	sendMessage(197416875, 'TEST');
+	sendVoice(197416875, $_POST['file'], $_POST['phone']);
 }
 
 //----------------------------------------------------------------------------------------------------------------------------------//
@@ -48,7 +49,7 @@ function sendMessage($chat_id, $message)
 	file_get_contents($GLOBALS['api'].'/sendMessage?chat_id='.$chat_id.'&text='.urlencode($message));
 }
 
-// function sendVoice() {
-	
-// }
+function sendVoice($chat_id, $file, $caption) {
+	file_get_contents($GLOBALS['api'].'/sendVoice?chat_id='.$chat_id.'&voice='.$file);
+}
 ?>
