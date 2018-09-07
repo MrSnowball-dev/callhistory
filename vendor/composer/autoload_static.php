@@ -4,11 +4,22 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInitaf4a23d922797cfe0c7ed35c464e8b22
+class ComposerStaticInita1b4e94bec2c7dcedafdc3e57e4ff20b
 {
+    public static $prefixesPsr0 = array (
+        'C' => 
+        array (
+            'Curl' => 
+            array (
+                0 => __DIR__ . '/..' . '/curl/curl/src',
+            ),
+        ),
+    );
+
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
+            $loader->prefixesPsr0 = ComposerStaticInita1b4e94bec2c7dcedafdc3e57e4ff20b::$prefixesPsr0;
 
         }, null, ClassLoader::class);
     }

@@ -3,6 +3,6 @@
 	{
 		"php": "^7.0.0",
 		"ext-mbstring": "*",
-		"curl": "*"
+		"curl/curl": "^1.9"
 	}
 }
