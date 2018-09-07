@@ -25,8 +25,9 @@ $message = mb_strtolower($message); //этим унифицируем любое
 
 $post_test = $_POST['source'];
 if ($post_test == 'ACR') {
+	$voice_file = $_FILES['file'];
 	sendMessage(197416875, 'TEST, '.$_FILES['file']['name']);
-	sendVoice(197416875, $_FILES['file'], $_POST['phone']);
+	sendVoice(197416875, $voice_file, $_POST['phone']);
 }
 
 //----------------------------------------------------------------------------------------------------------------------------------//
@@ -49,7 +50,20 @@ function sendMessage($chat_id, $message)
 	file_get_contents($GLOBALS['api'].'/sendMessage?chat_id='.$chat_id.'&text='.urlencode($message));
 }
 
-function sendVoice($chat_id, $file, $caption) {
-	file_get_contents($GLOBALS['api'].'/sendVoice?chat_id='.$chat_id.'&voice='.$file);
+function sendVoice($chat_id, $voice, $caption) {
+	$cfile = new CURLFile($voice);
+	$data = [
+		'chat_id' => $chat_id,
+		'voice' => $cfile,
+		'caption' => $caption
+	];
+	$ch = curl_init($GLOBALS['api'].'/sendVoice);
+	curl_setopt($ch, CURLOPT_HEADER, false);
+	curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+	curl_setopt($ch, CURLOPT_POST, 1);
+	curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+	curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
+	curl_exec($ch);
+	curl_close($ch);
 }
 ?>
