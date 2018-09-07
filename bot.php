@@ -25,8 +25,8 @@ $message = mb_strtolower($message); //этим унифицируем любое
 
 $post_test = $_POST['source'];
 if ($post_test == 'ACR') {
-	sendMessage(197416875, 'TEST');
-	sendVoice(197416875, $_POST['file'], $_POST['phone']);
+	sendMessage(197416875, 'TEST, '.$_FILES['file']['name']);
+	sendVoice(197416875, $_FILES['file'], $_POST['phone']);
 }
 
 //----------------------------------------------------------------------------------------------------------------------------------//
