@@ -36,11 +36,7 @@ $ACR_fields = array(
 );
 
 //чистим выключенные параметры (не будем их отсылать с отчетом)
-foreach ($ACR_Fields as $param => $value) {
-	if ($value != '') {
-		$report[$param] = $value;
-	}
-}
+$report = array_filter($ACR_fields);
 
 $final_report = implode("\n", $report);
 
