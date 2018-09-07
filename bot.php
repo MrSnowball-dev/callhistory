@@ -36,7 +36,7 @@ $ACR_fields = array(
 
 //чистим выключенные параметры (не будем их отсылать с отчетом)
 foreach ($ACR_Fields as $param => $value) {
-	if (!$value) {
+	if ($param[$value] == NULL) {
 		unset($ACR_fields[$param]);
 	}
 }
@@ -46,7 +46,7 @@ $report = implode('\n', $ACR_fields);
 //получили что-то от ACR? отправляем запись!
 if ($ACR_fields['source'] == 'ACR') {
 	$voice_file = $_FILES['file'];
-	sendMessage($chat_id, 'Запись:\n'.$report);
+	sendMessage($chat_id, urlencode('Запись:\n'.$report));
 	sendVoice($chat_id, $voice_file, $ACR_fields['duration']/1000);
 }
 
