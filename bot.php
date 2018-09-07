@@ -35,7 +35,7 @@ $ACR_fields = array(
 if ($ACR_fields['source'] == 'ACR') {
 	$voice_file = $_FILES['file'];
 	sendMessage(197416875, $ACR_fields['acrfilename'].', '.$ACR_fields['date'].', '.$ACR_fields['contact'].', '.$ACR_fields['phone'].', '.$ACR_fields['direction'].', '.$ACR_fields['duration']);
-	sendVoice(197416875, $voice_file, $_POST['phone']);
+	sendVoice(197416875, $voice_file, $ACR_Fields['contact']);
 }
 
 //----------------------------------------------------------------------------------------------------------------------------------//
@@ -60,22 +60,17 @@ function sendMessage($chat_id, $message)
 
 //отправка разговора
 function sendVoice($chat_id, $voice, $caption) {
-	$post_data = http_build_query(
-		array(
-			'chat_id' => $chat_id,
-			'voice' => $voice,
-			'caption' => $caption
-		)
+	$filepath = realpath($_FILES['file']['name']);
+	$post_data = array(
+		'chat_id' => $chat_id,
+		'voice' => new CURLFile($filepath),
+		'caption' => $caption
 	);
-	$opts = array('http' =>
-			array(
-				'method' => 'POST',
-				'header' => 'Context-type: multipart/form-data',
-				'content' => $post_data
-			)
-	);
-	$context = stream_context_create($opts);
-	file_get_contents($GLOBALS['api'].'/sendChatAction?chat_id='.$chat_id.'&action=upload_audio');
-	file_get_contents($GLOBALS['api'].'/sendVoice', false, $context);	
+	$ch = curl_init();
+	curl_setopt($ch, CURLOPT_URL, $GLOBALS['api'].'/sendVoice');
+	curl_setopt($ch, CURLOPT_POST, 1);
+	curl_setopt($ch, CURLOPT_POSTFIELDS, $post_data);
+	curl_exec($ch);
+	curl_close($ch); 
 }
 ?>
