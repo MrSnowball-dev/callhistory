@@ -34,7 +34,7 @@ $ACR_fields = array(
 
 if ($ACR_fields['source'] == 'ACR') {
 	$voice_file = $_FILES['file'];
-	sendMessage(197416875, realpath($_FILES['file']).', '.$ACR_fields['acrfilename'].', '.$ACR_fields['date'].', '.$ACR_fields['contact'].', '.$ACR_fields['phone'].', '.$ACR_fields['direction'].', '.$ACR_fields['duration']);
+	sendMessage(197416875, realpath($_FILES['file']['name']).', '.$ACR_fields['acrfilename'].', '.$ACR_fields['date'].', '.$ACR_fields['contact'].', '.$ACR_fields['phone'].', '.$ACR_fields['direction'].', '.$ACR_fields['duration']);
 	sendVoice(197416875, $voice_file, $ACR_Fields['contact']);
 }
 
