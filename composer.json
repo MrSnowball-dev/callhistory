@@ -2,6 +2,7 @@
 	"require":
 	{
 		"php": "^7.0.0",
-		"ext-mbstring": "*"
+		"ext-mbstring": "*",
+		"curl": "*"
 	}
 }
