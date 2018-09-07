@@ -12,6 +12,7 @@ $output = json_decode($input, TRUE); //сюда приходят все запр
 $chat_id = $output['message']['chat']['id']; //отделяем id чата, откуда идет обращение к боту, я = 197416875
 $message_id = $output['message']['message_id']; //id сообщения, которое нужно редактировать
 $message = $output['message']['text']; //сам текст сообщения
+$report = array(); //инициализация отчета
 
 $chat_id = 197416875; //УДАЛИТЬ ПОСЛЕ ВНЕДРЕНИЯ БД!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 //события ACR
@@ -37,7 +38,7 @@ $ACR_fields = array(
 //чистим выключенные параметры (не будем их отсылать с отчетом)
 foreach ($ACR_Fields as $param => $value) {
 	if ($value != '') {
-		array_push($report, $param[$value]);
+		$report[$param] = $value;
 	}
 }
 
