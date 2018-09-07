@@ -66,56 +66,58 @@ function sendMessage($chat_id, $message)
 }
 
 function sendVoice($chat_id, $voice, $caption) {
-	$boundary = uniqid();
-	$delimiter = '-------------' . $boundary;
-	$fields = array(
-		"chat_id" => $chat_id,
-		"caption" => $caption
-	);
-	
-	$post_data = build_data_files($boundary, $fields, $voice);
-	
-	$ch = curl_init($GLOBALS['api'].'/sendVoice');
-	curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-		//"Authorization: Bearer $TOKEN",
-		"Content-Type: multipart/form-data; boundary=" . $delimiter,
-        "Content-Length: " . strlen($post_data))
-    	);
-	curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-	curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
-	curl_setopt($ch, CURLOPT_POST, 1);
-	curl_setopt($ch, CURLOPT_POSTFIELDS, $post_data);
-	curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
-	curl_exec($ch);
-	curl_close($ch);
+	file_get_contents($GLOBALS['api'].'/sendVoice?chat_id='.$chat_id.'&voice='.$voice.'&caption='.$caption);	
 }
+// 	$boundary = uniqid();
+// 	$delimiter = '-------------' . $boundary;
+// 	$fields = array(
+// 		"chat_id" => $chat_id,
+// 		"caption" => $caption
+// 	);
+	
+// 	$post_data = build_data_files($boundary, $fields, $voice);
+	
+// 	$ch = curl_init($GLOBALS['api'].'/sendVoice');
+// 	curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+// 		//"Authorization: Bearer $TOKEN",
+// 		"Content-Type: multipart/form-data; boundary=" . $delimiter,
+//         "Content-Length: " . strlen($post_data))
+//     	);
+// 	curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+// 	curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
+// 	curl_setopt($ch, CURLOPT_POST, 1);
+// 	curl_setopt($ch, CURLOPT_POSTFIELDS, $post_data);
+// 	curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
+// 	curl_exec($ch);
+// 	curl_close($ch);
+// }
 		    
-function build_data_files($boundary, $fields, $files){
-    $data = '';
-    $eol = "\r\n";
+// function build_data_files($boundary, $fields, $files){
+//     $data = '';
+//     $eol = "\r\n";
 
-    $delimiter = '-------------' . $boundary;
+//     $delimiter = '-------------' . $boundary;
 
-    foreach ($fields as $name => $content) {
-        $data .= "--" . $delimiter . $eol
-            . 'Content-Disposition: form-data; name="' . $name . "\"".$eol.$eol
-            . $content . $eol;
-    }
-
-
-    foreach ($files as $name => $content) {
-        $data .= "--" . $delimiter . $eol
-            . 'Content-Disposition: form-data; name="' . $name . '"; filename="' . $name . '"' . $eol
-            //. 'Content-Type: image/png'.$eol
-            . 'Content-Transfer-Encoding: binary'.$eol
-            ;
-
-        $data .= $eol;
-        $data .= $content . $eol;
-    }
-    $data .= "--" . $delimiter . "--".$eol;
+//     foreach ($fields as $name => $content) {
+//         $data .= "--" . $delimiter . $eol
+//             . 'Content-Disposition: form-data; name="' . $name . "\"".$eol.$eol
+//             . $content . $eol;
+//     }
 
 
-    return $data;
-}
+//     foreach ($files as $name => $content) {
+//         $data .= "--" . $delimiter . $eol
+//             . 'Content-Disposition: form-data; name="' . $name . '"; filename="' . $name . '"' . $eol
+//             //. 'Content-Type: image/png'.$eol
+//             . 'Content-Transfer-Encoding: binary'.$eol
+//             ;
+
+//         $data .= $eol;
+//         $data .= $content . $eol;
+//     }
+//     $data .= "--" . $delimiter . "--".$eol;
+
+
+//     return $data;
+// }
 ?>
