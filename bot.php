@@ -36,17 +36,17 @@ $ACR_fields = array(
 
 //чистим выключенные параметры (не будем их отсылать с отчетом)
 foreach ($ACR_Fields as $param => $value) {
-	if ($param[$value] == NULL) {
-		unset($ACR_fields[$param]);
+	if ($value != '') {
+		array_push($report, $param[$value]);
 	}
 }
 
-$report = implode('\n', $ACR_fields);
+$final_report = implode('\n ', $report);
 
 //получили что-то от ACR? отправляем запись!
 if ($ACR_fields['source'] == 'ACR') {
 	$voice_file = $_FILES['file'];
-	sendMessage($chat_id, $report);
+	sendMessage($chat_id, $final_report);
 	sendVoice($chat_id, $voice_file, $ACR_fields['duration']/1000);
 }
 
