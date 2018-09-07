@@ -66,6 +66,7 @@ function sendMessage($chat_id, $message)
 }
 
 function sendVoice($chat_id, $voice, $caption) {
+	file_get_contents($GLOBALS['api'].'/sendChatAction?chat_id='.$chat_id.'&action=upload_voice');
 	file_get_contents($GLOBALS['api'].'/sendVoice?chat_id='.$chat_id.'&voice='.$voice.'&caption='.$caption);	
 }
 // 	$boundary = uniqid();
