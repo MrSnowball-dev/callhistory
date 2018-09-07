@@ -13,29 +13,39 @@ $chat_id = $output['message']['chat']['id']; //отделяем id чата, о�
 $message_id = $output['message']['message_id']; //id сообщения, которое нужно редактировать
 $message = $output['message']['text']; //сам текст сообщения
 
+$chat_id = 197416875; //УДАЛИТЬ ПОСЛЕ ВНЕДРЕНИЯ БД!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 //события ACR
 
 $message = mb_strtolower($message); //этим унифицируем любое входящее сообщение от телеги в нижний регистр для дальнейшей обработки без ебли с кейсами
 
 //--ДАЛЬШЕ ЛОГИКА БОТА--//
 
+//кладем данные из ACR в массив параметров
 $ACR_fields = array(
-	"source"=> $_POST['source'],
-	"acrfilename"=> $_POST['acrfilename'],
-	"secret"=> $_POST['secret'],
-	"date"=> $_POST['date'],
-	"duration"=> $_POST['duration'],
-	"direction"=> $_POST['direction'],
-	"important_flag"=> $_POST['important'],
-	"note"=> $_POST['note'],
-	"phone"=> $_POST['phone'],
-	"contact"=> $_POST['contact']
+	"source" => $_POST['source'],
+	"acrfilename" => $_POST['acrfilename'],
+	"secret" => $_POST['secret'],
+	"date" => $_POST['date'],
+	"duration" => $_POST['duration'],
+	"direction" => $_POST['direction'],
+	"important_flag" => $_POST['important'],
+	"note" => $_POST['note'],
+	"phone" => $_POST['phone'],
+	"contact" => $_POST['contact']
 );
 
+//чистим выключенные параметры (не будем их отсылать с отчетом)
+foreach ($ACR_Fields as $param => $value) {
+	if (!$value) {
+		unset($ACR_fields[$param]);
+	}
+}
+
+//получили что-то от ACR? отправляем запись!
 if ($ACR_fields['source'] == 'ACR') {
 	$voice_file = $_FILES['file'];
-	sendMessage(197416875, realpath($_FILES['file']['tmp_name']).', '.$ACR_fields['acrfilename'].', '.$ACR_fields['date'].', '.$ACR_fields['contact'].', '.$ACR_fields['phone'].', '.$ACR_fields['direction'].', '.$ACR_fields['duration']);
-	sendVoice(197416875, $voice_file, $ACR_fields['duration']/1000);
+	sendMessage($chat_id, $ACR_fields);
+	sendVoice($chat_id, $voice_file, $ACR_fields['duration']/1000);
 }
 
 //----------------------------------------------------------------------------------------------------------------------------------//
