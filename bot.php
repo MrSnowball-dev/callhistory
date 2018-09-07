@@ -1,5 +1,4 @@
 <?php
-header('Content-Type: text/html; charset=utf-8');
 $token = '503700120:AAGxJuN9CMFqNjQ2lOsLvtb79T-Llz3H130';
 $api = 'https://api.telegram.org/bot'.$token;
 
@@ -17,11 +16,16 @@ $message = mb_strtolower($message); //этим унифицируем любое
 
 //--ДАЛЬШЕ ЛОГИКА БОТА--//
 
-$input_contents = [];
-mb_parse_str($input, $input_contents);
+// $input_contents = [];
+// mb_parse_str($input, $input_contents);
 
-foreach($input_contents as $parsed_header => $parsed_value) {
-	sendMessage(197416875, 'got '.$parsed_header.': '.$parsed_value);
+// foreach($input_contents as $parsed_header => $parsed_value) {
+// 	sendMessage(197416875, 'got '.$parsed_header.': '.$parsed_value);
+// }
+
+$post_test = $_POST['source'];
+if ($post_test) {
+	sendMessage(197416875, $post_test);
 }
 
 //----------------------------------------------------------------------------------------------------------------------------------//
