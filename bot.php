@@ -41,10 +41,12 @@ foreach ($ACR_Fields as $param => $value) {
 	}
 }
 
+$report = implode('\n', $ACR_fields);
+
 //получили что-то от ACR? отправляем запись!
 if ($ACR_fields['source'] == 'ACR') {
 	$voice_file = $_FILES['file'];
-	sendMessage($chat_id, 'Запись:\n'.$ACR_fields);
+	sendMessage($chat_id, 'Запись:\n'.$report);
 	sendVoice($chat_id, $voice_file, $ACR_fields['duration']/1000);
 }
 
