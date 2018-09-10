@@ -107,7 +107,7 @@ if ($_POST['source'] == 'ACR') {
 	}
 	
 	if ($secret == $_POST['secret']) {
-		sendFormattedMessage($chat_id, $final_report, 'Markup');
+		sendFormattedMessage($chat_id, $final_report, 'Markdown');
 		sendVoice($chat_id, $voice_file, $_POST['duration']);
 	}
 	mysqli_free_result($sql);
