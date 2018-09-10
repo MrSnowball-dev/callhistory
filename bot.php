@@ -15,8 +15,6 @@ $db = mysqli_connect('eu-cdbr-west-02.cleardb.net', 'b70a1c22756565', '6c429cd3'
 $chat_id = $output['message']['chat']['id']; //отделяем id чата, откуда идет обращение к боту, я = 197416875
 $message_id = $output['message']['message_id']; //id сообщения, которое нужно редактировать
 $message = $output['message']['text']; //сам текст сообщения
-$user = $output['message']['from']['username']; //сюда кладем юзернейм человек, обратившегося к боту
-$user_id = $output['message']['from']['id']; //id юзера
 $report = array(); //инициализация отчета
 
 //$chat_id = 197416875; //УДАЛИТЬ ПОСЛЕ ВНЕДРЕНИЯ БД!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -26,10 +24,22 @@ $message = mb_strtolower($message); //этим унифицируем любое
 //--ДАЛЬШЕ ЛОГИКА БОТА--//
 
 //регистрация+генерация secret для ACR
-if ($message = '/start') {
+if ($message == '/start') {
 	//генерация secret
-	//mysqli_query($db, 'insert into users (chat_id, user_id) values ('.$chat_id.', '.$user_id.')');
-	sendMessage($chat_id, "Вы зарегистрированы!\nВведите /secret чтобы узнать secret для настройки ACR.\nВаш user_id: ".$user_id."\nВаш chat_id:".$chat_id);
+	$acr_secret = base_convert($chat_id, 10, 36);
+	$query = mysql_query($db, 'select chat_id from users');
+	if (mysqli_fetch_object($query) !== NULL) {
+		sendMessage($chat_id, "Вы уже зарегистрированы!\n\nВведите /secret чтобы узнать secret для настройки ACR.");
+	} else {
+		mysqli_query($db, 'insert into users (chat_id, acr_secret) values ('.$chat_id.', '.$acr_secret.')');
+		sendMessage($chat_id, "Вы зарегистрированы!\n\nВведите /secret чтобы узнать secret для настройки ACR.);
+	}
+}
+
+if ($message == '/secret') {
+	$query = mysqli_query($db, 'select acr_secret from users where chatid='.$chat_id);
+	$secret = mysqli_fetch_object($query);
+	sendFormattedMessage($chat_id, "Ваш secret:\n```".$secret."```", 'Markdown');
 }
 
 //кладем данные из ACR в массив параметров
