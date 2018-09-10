@@ -25,19 +25,19 @@ $message = mb_strtolower($message); //этим унифицируем любое
 
 //регистрация+генерация secret для ACR
 if ($message == '/start') {
-	//генерация secret
-	$acr_secret = base_convert($chat_id, 10, 36);
-	
 	//запрашиваем БД регистрировался ли юзер ранее, чтобы 
-	$query = mysqli_query($db, 'select chat_id from users');
+	$query = mysqli_query($db, 'select chat_id from users where chat_id='.$chat_id);
 	while ($sql = mysqli_fetch_object($query)) {
 		$sql_chat_id = $sql->chat_id;
 	}
 	if ($sql_chat_id == $chat_id) {
 		sendMessage($chat_id, "Вы уже были зарегистрированы!\n\nВведите /secret чтобы узнать secret для настройки ACR.");
 	} else {
+		//генерация secret
+		$acr_secret = base_convert($chat_id, 10, 36);
 		sendFormattedMessage($chat_id, "Привет! Сейчас я покажу как настроить ACR для пользования ботом.\n\nДля начала надо зайти в пункт меню:\n*Настройки*->*Облачные сервисы*->*WebHook* \n\nДалее настроить URL для подключения к боту. Этот бот работает по адресу:\n\n`https://callhistory-bot.herokuapp.com/bot.php` \n\nВ поле *Секрет* надо будет ввести секретный код, который выдаст бот после регистрации.\n\nПосле этого можно выбрать желаемые значения, отправляемые вместе с файлом записи. Они отобразятся в одном сообщении вместе с записью голоса.\n\nЕсли у вас уже есть записи в памяти телефона - выгрузите их все сразу кнопкой в самом низу *\"Выгрузить еще раз\"*. Файлы добавятся в Telegram.\nЕсли у вас не было записей до этого - просто пользуйтесь телефоном как обычно, записи будут выгружены в соответствии с настройками приложения ACR.\n", 'Markdown');
 		mysqli_query($db, "insert into users (chat_id, acr_secret) values (".$chat_id.", '".$acr_secret."')");
+		sleep(5);
 		sendMessage($chat_id, "Вы зарегистрированы!\n\nВаш секретный код: ```".$secret."```\n\nВведите его в поле secret в настройках Web Hook в ACR. Это идентифицирует вас и именно ваши записи.", 'Markdown');
 	}
 	
