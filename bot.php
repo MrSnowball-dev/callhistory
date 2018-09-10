@@ -29,7 +29,7 @@ $message = mb_strtolower($message); //этим унифицируем любое
 if ($message = '/start') {
 	//генерация secret
 	//mysqli_query($db, 'insert into users (chat_id, user_id) values ('.$chat_id.', '.$user_id.')');
-	sendMessage($chat_id, "Вы зарегистрированы!\nВведите /secret чтобы узнать secret для настройки ACR.")
+	sendMessage($chat_id, "Вы зарегистрированы!\nВведите /secret чтобы узнать secret для настройки ACR.\nВаш user_id: ".$user_id."\nВаш chat_id:".$chat_id);
 }
 
 //кладем данные из ACR в массив параметров
