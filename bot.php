@@ -35,14 +35,14 @@ if ($message == '/start') {
 		sendMessage($chat_id, "Вы уже были зарегистрированы!\n\nВведите /secret чтобы узнать secret для настройки ACR.");
 	} else {
 		mysqli_query($db, "insert into users (chat_id, acr_secret) values (".$chat_id.", '".$acr_secret."')");
-		sendMessage($chat_id, "Вы зарегистрированы!\n\nВведите /secret чтобы узнать secret для настройки ACR.\n\n".$chat_id."\n".$acr_secret);
+		sendMessage($chat_id, "Вы зарегистрированы!\n\nВведите /secret чтобы узнать секретный код для настройки ACR.\n\n".$chat_id."\n".$acr_secret);
 	}
 	
 	mysqli_free_result($sql);
 }
 
 if ($message == '/secret') {
-	$query = mysqli_query($db, 'select acr_secret from users where chatid='.$chat_id);
+	$query = mysqli_query($db, 'select acr_secret from users where chat_id='.$chat_id);
 	while ($sql = mysqli_fetch_object($query)) {
 		$secret = $sql->acr_secret;
 	}
