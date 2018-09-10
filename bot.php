@@ -15,6 +15,8 @@ $db = mysqli_connect('eu-cdbr-west-02.cleardb.net', 'b70a1c22756565', '6c429cd3'
 $chat_id = $output['message']['chat']['id']; //отделяем id чата, откуда идет обращение к боту
 $message_id = $output['message']['message_id']; //id сообщения, которое нужно редактировать
 $message = $output['message']['text']; //сам текст сообщения
+$user = $output['message']['from']['username'];
+$user_id = $output['message']['from']['id'];
 $report = array(); //инициализация отчета
 
 $message = mb_strtolower($message); //этим унифицируем любое входящее сообщение от телеги в нижний регистр для дальнейшей обработки без ебли с кейсами
@@ -51,6 +53,10 @@ if ($message == '/secret') {
 	sendFormattedMessage($chat_id, "Ваш секретный код:\n\n```".$secret."```\n\nВведите его в поле secret в настройках Web Hook в ACR. Это идентифицирует вас и именно ваши записи.", 'Markdown');
 	
 	mysqli_free_result($sql);
+}
+
+if ($message == '/givemeid') {
+	sendMessage($chat_id, $chat_id.' | '.$user.' | '.$user_id);
 }
 
 //кладем данные из ACR в массив параметров
