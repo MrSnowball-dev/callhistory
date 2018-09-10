@@ -69,19 +69,19 @@ if ($_POST['direction'] == 1) {
 }
 
 if ($ACR_fields['date']) {
-	$ACR_fields['date'] = '*Дата:* '.$ACR_fields['date'];
+	$ACR_fields['date'] = 'Дата: '.$ACR_fields['date'];
 }
 if ($ACR_fields['phone']) {
-	$ACR_fields['phone'] = '*Номер:* '.$ACR_fields['phone'];
+	$ACR_fields['phone'] = 'Номер: '.$ACR_fields['phone'];
 }
 if ($ACR_fields['contact']) {
-	$ACR_fields['contact'] = '*Имя контакта:* '.$ACR_fields['contact'];
+	$ACR_fields['contact'] = 'Имя контакта: '.$ACR_fields['contact'];
 }
 if ($ACR_fields['note']) {
-	$ACR_fields['note'] = '*Заметка:* '.urldecode($ACR_fields['note']);
+	$ACR_fields['note'] = 'Заметка: '.urldecode($ACR_fields['note']);
 }
 if ($ACR_fields['duration']) {
-	$ACR_fields['duration'] = '*Длительность:* '.$ACR_fields['duration'].' секунд';
+	$ACR_fields['duration'] = 'Длительность: '.$ACR_fields['duration'].' секунд';
 }
 if ($ACR_fields['important_flag']) {
 	$ACR_fields['important_flag'] = '#важный';
