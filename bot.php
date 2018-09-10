@@ -106,7 +106,7 @@ if ($_POST['source'] == 'ACR') {
 		$secret = $sql->acr_secret;
 	}
 	
-	if ($secret == $ACR_fields['secret']) {
+	if ($secret == $_POST['secret']) {
 		sendMessage($chat_id, "Запись:\n".$final_report);
 		sendVoice($chat_id, $voice_file, $_POST['duration']);
 	}
