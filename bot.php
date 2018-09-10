@@ -8,18 +8,29 @@ $api = 'https://api.telegram.org/bot'.$token;
 $input = file_get_contents('php://input');
 $output = json_decode($input, TRUE); //сюда приходят все запросы по вебхукам
 
+//соединение с БД
+$db = mysqli_connect('eu-cdbr-west-02.cleardb.net', 'b70a1c22756565', '6c429cd3', 'heroku_18de73b74f8039e');
+
 //телеграмные события
 $chat_id = $output['message']['chat']['id']; //отделяем id чата, откуда идет обращение к боту, я = 197416875
 $message_id = $output['message']['message_id']; //id сообщения, которое нужно редактировать
 $message = $output['message']['text']; //сам текст сообщения
+$user = $output['message']['from']['username']; //сюда кладем юзернейм человек, обратившегося к боту
+$user_id = $output['message']['from']['id']; //id юзера
 $report = array(); //инициализация отчета
 
-$chat_id = 197416875; //УДАЛИТЬ ПОСЛЕ ВНЕДРЕНИЯ БД!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-//события ACR
+//$chat_id = 197416875; //УДАЛИТЬ ПОСЛЕ ВНЕДРЕНИЯ БД!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 $message = mb_strtolower($message); //этим унифицируем любое входящее сообщение от телеги в нижний регистр для дальнейшей обработки без ебли с кейсами
 
 //--ДАЛЬШЕ ЛОГИКА БОТА--//
+
+//регистрация+генерация secret для ACR
+if ($message = '/start') {
+	//генерация secret
+	//mysqli_query($db, 'insert into users (chat_id, user_id) values ('.$chat_id.', '.$user_id.')');
+	sendMessage($chat_id, "Вы зарегистрированы!\nВведите /secret чтобы узнать secret для настройки ACR.")
+}
 
 //кладем данные из ACR в массив параметров
 $ACR_fields = array(
@@ -37,7 +48,6 @@ $ACR_fields = array(
 
 //чистим выключенные параметры (не будем их отсылать с отчетом)
 $report = array_filter($ACR_fields);
-
 $final_report = implode("\n", $report);
 
 //получили что-то от ACR? отправляем запись!
@@ -82,4 +92,6 @@ function sendVoice($chat_id, $voice, $duration) {
 	curl_exec($ch);
 	curl_close($ch); 
 }
+
+mysqli_close($db);
 ?>
