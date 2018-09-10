@@ -35,7 +35,7 @@ if ($message == '/start') {
 		sendMessage($chat_id, "Вы уже были зарегистрированы!\n\nВведите /secret чтобы узнать secret для настройки ACR.");
 	} else {
 		mysqli_query($db, 'insert into users (chat_id, acr_secret) values ('.$chat_id.', '.$acr_secret.')');
-		sendMessage($chat_id, "Вы зарегистрированы!\n\nВведите /secret чтобы узнать secret для настройки ACR.);
+		sendMessage($chat_id, "Вы зарегистрированы!\n\nВведите /secret чтобы узнать secret для настройки ACR.");
 	}
 	
 	mysqli_free_result($sql);
@@ -46,7 +46,7 @@ if ($message == '/secret') {
 	while ($sql = mysqli_fetch_object($query)) {
 		$secret = $sql->acr_secret;
 	}
-	sendFormattedMessage($chat_id, "Ваш secret:\n```".$secret."```", 'Markdown');
+	sendFormattedMessage($chat_id, "Ваш секретный код:\n\n```".$secret."```\n\nВведите его в поле secret в настройках Web Hook в ACR. Это идентифицирует вас и именно ваши записи.", 'Markdown');
 	
 	mysqli_free_result($sql);
 }
