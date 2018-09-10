@@ -27,8 +27,11 @@ $message = mb_strtolower($message); //этим унифицируем любое
 if ($message == '/start') {
 	//генерация secret
 	$acr_secret = base_convert($chat_id, 10, 36);
-	$query = mysql_query($db, 'select chat_id from users');
-	if (mysqli_fetch_object($query) !== NULL) {
+	$query = mysqli_query($db, 'select chat_id from users');
+	while ($sql = mysqli_fetch_object($query)) {
+		$sql_chat_id = $sql->chat_id;
+	}
+	if ($sql_chat_id == NULL) {
 		sendMessage($chat_id, "Вы уже зарегистрированы!\n\nВведите /secret чтобы узнать secret для настройки ACR.");
 	} else {
 		mysqli_query($db, 'insert into users (chat_id, acr_secret) values ('.$chat_id.', '.$acr_secret.')');
@@ -38,7 +41,9 @@ if ($message == '/start') {
 
 if ($message == '/secret') {
 	$query = mysqli_query($db, 'select acr_secret from users where chatid='.$chat_id);
-	$secret = mysqli_fetch_object($query);
+	while ($sql = mysqli_fetch_object($query)) {
+		$secret = $sql->acr_secret;
+	}
 	sendFormattedMessage($chat_id, "Ваш secret:\n```".$secret."```", 'Markdown');
 }
 
