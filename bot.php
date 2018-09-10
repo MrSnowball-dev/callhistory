@@ -69,19 +69,19 @@ if ($_POST['direction'] == 1) {
 }
 
 if ($ACR_fields['date']) {
-	$ACR_fields['date'] = '**Дата:** '.$ACR_fields['date'];
+	$ACR_fields['date'] = '*Дата:* '.$ACR_fields['date'];
 }
 if ($ACR_fields['phone']) {
-	$ACR_fields['phone'] = '**Номер:** '.$ACR_fields['phone'];
+	$ACR_fields['phone'] = '*Номер:* '.$ACR_fields['phone'];
 }
 if ($ACR_fields['contact']) {
-	$ACR_fields['contact'] = '**Имя контакта:** '.$ACR_fields['contact'];
+	$ACR_fields['contact'] = '*Имя контакта:* '.$ACR_fields['contact'];
 }
 if ($ACR_fields['note']) {
-	$ACR_fields['note'] = '**Заметка:** '.urldecode($ACR_fields['note']);
+	$ACR_fields['note'] = '*Заметка:* '.urldecode($ACR_fields['note']);
 }
 if ($ACR_fields['duration']) {
-	$ACR_fields['duration'] = '**Длительность:** '.$ACR_fields['duration'].' секунд';
+	$ACR_fields['duration'] = '*Длительность:* '.$ACR_fields['duration'].' секунд';
 }
 if ($ACR_fields['important_flag']) {
 	$ACR_fields['important_flag'] = '#важный';
@@ -95,20 +95,15 @@ $final_report = implode("\n", $report);
 if ($_POST['source'] == 'ACR') {
 	$voice_file = $_FILES['file'];
 	
-	$query = mysqli_query($db, "select chat_id from users where acr_secret='".$_POST['secret']."'");
+	$query = mysqli_query($db, "select * from users where acr_secret='".$_POST['secret']."'");
 	while ($sql = mysqli_fetch_object($query)) {
 		$chat_id = $sql->chat_id;
-	}
-	mysqli_free_result($sql);
-	
-	$query = mysqli_query($db, 'select acr_secret from users where chat_id='.$chat_id);
-	while ($sql = mysqli_fetch_object($query)) {
 		$secret = $sql->acr_secret;
 	}
 	
 	if ($secret == $_POST['secret']) {
+		sendVoice($chat_id, $voice_file, $_POST['duration']/1000);
 		sendFormattedMessage($chat_id, $final_report, 'Markdown');
-		sendVoice($chat_id, $voice_file, $_POST['duration']);
 	}
 	mysqli_free_result($sql);
 }
@@ -135,11 +130,13 @@ function sendMessage($chat_id, $message)
 
 //отправка разговора
 function sendVoice($chat_id, $voice, $duration) {
+	file_get_contents($GLOBALS['api'].'/sendChatAction?chat_id='.$chat_id.'&action=upload_voice');
 	$filepath = realpath($_FILES['file']['tmp_name']);
 	$post_data = array(
 		'chat_id' => $chat_id,
 		'voice' => new CURLFile($filepath),
-		'duration' => $duration
+		'duration' => $duration,
+		'caption' => 'TEST'
 	);
 	$ch = curl_init();
 	curl_setopt($ch, CURLOPT_URL, $GLOBALS['api'].'/sendVoice');
