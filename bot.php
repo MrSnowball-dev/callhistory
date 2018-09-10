@@ -102,8 +102,7 @@ if ($_POST['source'] == 'ACR') {
 	}
 	
 	if ($secret == $_POST['secret']) {
-		sendVoice($chat_id, $voice_file, $_POST['duration']/1000);
-		sendFormattedMessage($chat_id, $final_report, 'Markdown');
+		sendVoice($chat_id, $voice_file, $_POST['duration']/1000, $final_report);
 	}
 	mysqli_free_result($sql);
 }
@@ -129,14 +128,14 @@ function sendMessage($chat_id, $message)
 }
 
 //отправка разговора
-function sendVoice($chat_id, $voice, $duration) {
+function sendVoice($chat_id, $voice, $duration, $caption) {
 	file_get_contents($GLOBALS['api'].'/sendChatAction?chat_id='.$chat_id.'&action=upload_voice');
 	$filepath = realpath($_FILES['file']['tmp_name']);
 	$post_data = array(
 		'chat_id' => $chat_id,
 		'voice' => new CURLFile($filepath),
 		'duration' => $duration,
-		'caption' => 'TEST'
+		'caption' => $TEST
 	);
 	$ch = curl_init();
 	curl_setopt($ch, CURLOPT_URL, $GLOBALS['api'].'/sendVoice');
