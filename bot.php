@@ -12,12 +12,10 @@ $output = json_decode($input, TRUE); //сюда приходят все запр
 $db = mysqli_connect('eu-cdbr-west-02.cleardb.net', 'b70a1c22756565', '6c429cd3', 'heroku_18de73b74f8039e');
 
 //телеграмные события
-$chat_id = $output['message']['chat']['id']; //отделяем id чата, откуда идет обращение к боту, я = 197416875
+$chat_id = $output['message']['chat']['id']; //отделяем id чата, откуда идет обращение к боту
 $message_id = $output['message']['message_id']; //id сообщения, которое нужно редактировать
 $message = $output['message']['text']; //сам текст сообщения
 $report = array(); //инициализация отчета
-
-//$chat_id = 197416875; //УДАЛИТЬ ПОСЛЕ ВНЕДРЕНИЯ БД!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 $message = mb_strtolower($message); //этим унифицируем любое входящее сообщение от телеги в нижний регистр для дальнейшей обработки без ебли с кейсами
 
@@ -27,6 +25,8 @@ $message = mb_strtolower($message); //этим унифицируем любое
 if ($message == '/start') {
 	//генерация secret
 	$acr_secret = base_convert($chat_id, 10, 36);
+	
+	//запрашиваем БД регистрировался ли юзер ранее, чтобы 
 	$query = mysqli_query($db, 'select chat_id from users');
 	while ($sql = mysqli_fetch_object($query)) {
 		$sql_chat_id = $sql->chat_id;
@@ -53,26 +53,49 @@ if ($message == '/secret') {
 
 //кладем данные из ACR в массив параметров
 $ACR_fields = array(
-	"source" => $_POST['source'],
-	"secret" => $_POST['secret'],
 	"date" => date('d.m.Y H:i:s', $_POST['date']),
 	"duration" => $_POST['duration']/1000,
-	"direction" => $_POST['direction'],
 	"important_flag" => $_POST['important'],
 	"note" => $_POST['note'],
 	"phone" => $_POST['phone'],
 	"contact" => $_POST['contact']
 );
 
+//форматируем входные данные (если они есть)
+if ($_POST['direction'] == 1) {
+	$ACR_fields['direction'] = 'Исходящий';
+} else if ($_POST['direction'] == 0){
+	$ACR_fields['direction'] = 'Входящий';
+}
+
+if ($ACR_fields['date']) {
+	$ACR_fields['date'] = 'Дата: '.$ACR_fields['date'];
+}
+if ($ACR_fields['duration']) {
+	$ACR_fields['duration'] = 'Длительность: '.$ACR_fields['duration'];
+}
+if ($ACR_fields['important_flag']) {
+	$ACR_fields['important_flag'] = '#важный';
+}
+if ($ACR_fields['note']) {
+	$ACR_fields['note'] = 'Заметка: '.$ACR_fields['note'];
+}
+if ($ACR_fields['phone']) {
+	$ACR_fields['phone'] = 'Номер: '.$ACR_fields['phone'];
+}
+if ($ACR_fields['contact']) {
+	$ACR_fields['contact'] = 'Имя контакта: '.$ACR_fields['contact'];
+}
+
 //чистим выключенные параметры (не будем их отсылать с отчетом)
 $report = array_filter($ACR_fields);
 $final_report = implode("\n", $report);
 
 //получили что-то от ACR? отправляем запись!
-if ($ACR_fields['source'] == 'ACR') {
+if ($_POST['source'] == 'ACR') {
 	$voice_file = $_FILES['file'];
 	
-	$query = mysqli_query($db, "select chat_id from users where acr_secret='".$ACR_fields['secret']."'");
+	$query = mysqli_query($db, "select chat_id from users where acr_secret='".$_POST['secret']."'");
 	while ($sql = mysqli_fetch_object($query)) {
 		$chat_id = $sql->chat_id;
 	}
@@ -85,7 +108,7 @@ if ($ACR_fields['source'] == 'ACR') {
 	
 	if ($secret == $ACR_fields['secret']) {
 		sendMessage($chat_id, "Запись:\n".$final_report);
-		sendVoice($chat_id, $voice_file, $ACR_fields['duration']/1000);
+		sendVoice($chat_id, $voice_file, $_POST['duration']);
 	}
 	mysqli_free_result($sql);
 }
