@@ -54,10 +54,9 @@ if ($message == '/secret') {
 //кладем данные из ACR в массив параметров
 $ACR_fields = array(
 	"source" => $_POST['source'],
-	"acrfilename" => $_POST['acrfilename'],
 	"secret" => $_POST['secret'],
-	"date" => $_POST['date'],
-	"duration" => $_POST['duration'],
+	"date" => date('d.m.Y H:i:s', $_POST['date'],
+	"duration" => $_POST['duration']/1000,
 	"direction" => $_POST['direction'],
 	"important_flag" => $_POST['important'],
 	"note" => $_POST['note'],
