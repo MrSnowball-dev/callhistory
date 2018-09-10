@@ -55,7 +55,7 @@ if ($message == '/secret') {
 $ACR_fields = array(
 	"source" => $_POST['source'],
 	"secret" => $_POST['secret'],
-	"date" => date('d.m.Y H:i:s', $_POST['date'],
+	"date" => date('d.m.Y H:i:s', $_POST['date']),
 	"duration" => $_POST['duration']/1000,
 	"direction" => $_POST['direction'],
 	"important_flag" => $_POST['important'],
