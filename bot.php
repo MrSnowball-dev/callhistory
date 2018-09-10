@@ -72,10 +72,18 @@ $final_report = implode("\n", $report);
 //получили что-то от ACR? отправляем запись!
 if ($ACR_fields['source'] == 'ACR') {
 	$voice_file = $_FILES['file'];
+	
+	$query = mysqli_query($db, "select chat_id from users where acr_secret='".$ACR_fields['secret']."'");
+	while ($sql = mysqli_fetch_object($query)) {
+		$chat_id = $sql->chat_id;
+	}
+	mysqli_free_result($sql);
+	
 	$query = mysqli_query($db, 'select acr_secret from users where chat_id='.$chat_id);
 	while ($sql = mysqli_fetch_object($query)) {
 		$secret = $sql->acr_secret;
 	}
+	
 	if ($secret == $ACR_fields['secret']) {
 		sendMessage($chat_id, "Запись:\n".$final_report);
 		sendVoice($chat_id, $voice_file, $ACR_fields['duration']/1000);
