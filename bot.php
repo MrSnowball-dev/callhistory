@@ -135,7 +135,7 @@ function sendVoice($chat_id, $voice, $duration, $caption) {
 		'chat_id' => $chat_id,
 		'voice' => new CURLFile($filepath),
 		'duration' => $duration,
-		'caption' => $TEST
+		'caption' => $caption
 	);
 	$ch = curl_init();
 	curl_setopt($ch, CURLOPT_URL, $GLOBALS['api'].'/sendVoice');
