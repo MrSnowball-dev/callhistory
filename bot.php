@@ -1,15 +1,16 @@
 <?php
 
+include 'config.php';
 require_once 'vendor/autoload.php';
 
-$token = '503700120:AAGxJuN9CMFqNjQ2lOsLvtb79T-Llz3H130';
+$token = $tg_bot_token;
 $api = 'https://api.telegram.org/bot'.$token;
 
 $input = file_get_contents('php://input');
 $output = json_decode($input, TRUE); //сюда приходят все запросы по вебхукам
 
 //соединение с БД
-$db = mysqli_connect('eu-cdbr-west-02.cleardb.net', 'b70a1c22756565', '6c429cd3', 'heroku_18de73b74f8039e');
+$db = mysqli_connect($db_host, $db_username, $db_pass, $db_shema);
 
 //телеграмные события
 $chat_id = $output['message']['chat']['id']; //отделяем id чата, откуда идет обращение к боту
