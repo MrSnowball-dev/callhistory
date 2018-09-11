@@ -10,7 +10,7 @@ $input = file_get_contents('php://input');
 $output = json_decode($input, TRUE); //сюда приходят все запросы по вебхукам
 
 //соединение с БД
-$db = mysqli_connect($db_host, $db_username, $db_pass, $db_shema);
+$db = mysqli_connect($db_host, $db_username, $db_pass, $db_schema);
 
 //телеграмные события
 $chat_id = $output['message']['chat']['id']; //отделяем id чата, откуда идет обращение к боту
@@ -37,7 +37,7 @@ if ($message == '/start') {
 		//генерация secret
 		$acr_secret = base_convert($chat_id, 10, 36);
 		sendFormattedMessage($chat_id, "Привет! Сейчас я покажу как настроить ACR для пользования ботом.\n\nДля начала надо зайти в пункт меню:\n*Настройки*->*Облачные сервисы*->*WebHook* \n\nДалее настроить URL для подключения к боту. Этот бот работает по адресу:\n\n`https://callhistory-bot.herokuapp.com/bot.php` \n\nВ поле *Секрет* надо будет ввести секретный код, который выдаст бот после регистрации.\n\nПосле этого можно выбрать желаемые значения, отправляемые вместе с файлом записи. Они отобразятся в одном сообщении вместе с записью голоса.\n\nЕсли у вас уже есть записи в памяти телефона - выгрузите их все сразу кнопкой в самом низу *\"Выгрузить еще раз\"*. Файлы добавятся в Telegram.\nЕсли у вас не было записей до этого - просто пользуйтесь телефоном как обычно, записи будут выгружены в соответствии с настройками приложения ACR.\n", 'Markdown');
-		mysqli_query($db, "insert into users (chat_id, acr_secret) values (".$chat_id.", '".$acr_secret."')");
+		mysqli_query($db, "insert into users (chat_id, acr_secret) values (".$chat_id.", encrypt('".$acr_secret."', 'ACR'))");
 		sleep(5);
 		sendFormattedMessage($chat_id, "Вы зарегистрированы!\n\nВаш секретный код:\n`".$acr_secret."`\n\nВведите его в поле secret в настройках Web Hook в ACR. Это идентифицирует вас и именно ваши записи.", 'Markdown');
 	}
@@ -46,7 +46,7 @@ if ($message == '/start') {
 }
 
 if ($message == '/secret') {
-	$query = mysqli_query($db, 'select acr_secret from users where chat_id='.$chat_id);
+	$query = mysqli_query($db, "select decrypt(acr_secret, 'ACR') from users where chat_id=".$chat_id);
 	while ($sql = mysqli_fetch_object($query)) {
 		$secret = $sql->acr_secret;
 	}
