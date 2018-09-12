@@ -102,13 +102,13 @@ $final_report = implode("\n", $report);
 if ($_POST['source'] == 'ACR') {
 	$voice_file = $_FILES['file'];
 	
-	$query = mysqli_query($db, "select * from users where acr_secret='".$_POST['secret']."'");
+	$query = mysqli_query($db, "select * from users where acr_secret=SHA2('".$_POST['secret']."', 256)");
 	while ($sql = mysqli_fetch_object($query)) {
 		$chat_id = $sql->chat_id;
 		$secret = $sql->acr_secret;
 	}
 	
-	if ($secret == $_POST['secret']) {
+	if ($secret == hash('sha256', $_POST['secret'])) {
 		sendVoice($chat_id, $voice_file, $_POST['duration']/1000, $final_report);
 	}
 	mysqli_free_result($sql);
