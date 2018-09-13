@@ -61,7 +61,7 @@ if ($message == '/help') {
 //кладем данные из ACR в массив параметров
 $ACR_fields = array(
 	"date" => date('d.m.Y, H:i:s', $_POST['date']),
-	"duration" => $_POST['duration']/1000,
+	"duration" => $_POST['duration']%1000,
 	"important_flag" => $_POST['important'],
 	"note" => $_POST['note'],
 	"phone" => $_POST['phone'],
@@ -88,7 +88,7 @@ if ($ACR_fields['note']) {
 	$ACR_fields['note'] = 'Заметка: '.urldecode($ACR_fields['note']);
 }
 if ($ACR_fields['duration']) {
-	$ACR_fields['duration'] = 'Длительность: '.floor($ACR_fields['duration']/1000).' секунд';
+	$ACR_fields['duration'] = 'Длительность: '.floor($ACR_fields['duration']).' секунд';
 }
 if ($ACR_fields['important_flag']) {
 	$ACR_fields['important_flag'] = '#важный';
