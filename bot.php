@@ -60,7 +60,7 @@ if ($message == '/help') {
 
 //кладем данные из ACR в массив параметров
 $ACR_fields = array(
-	"date" => date('d.m.Y H:i:s', $_POST['date']),
+	"date" => date('d.m.Y, H:i:s', $_POST['date']),
 	"duration" => $_POST['duration']/1000,
 	"important_flag" => $_POST['important'],
 	"note" => $_POST['note'],
@@ -79,16 +79,16 @@ if ($ACR_fields['date']) {
 	$ACR_fields['date'] = 'Дата: '.$ACR_fields['date'];
 }
 if ($ACR_fields['phone']) {
-	$ACR_fields['phone'] = 'Номер: '.$ACR_fields['phone'];
+	$ACR_fields['phone'] = 'Номер: '.urldecode($ACR_fields['phone']);
 }
 if ($ACR_fields['contact']) {
-	$ACR_fields['contact'] = 'Имя контакта: '.$ACR_fields['contact'];
+	$ACR_fields['contact'] = 'Имя контакта: '.urldecode($ACR_fields['contact']);
 }
 if ($ACR_fields['note']) {
 	$ACR_fields['note'] = 'Заметка: '.urldecode($ACR_fields['note']);
 }
 if ($ACR_fields['duration']) {
-	$ACR_fields['duration'] = 'Длительность: '.$ACR_fields['duration'].' секунд';
+	$ACR_fields['duration'] = 'Длительность: '.floor($ACR_fields['duration']%1000%60).' секунд';
 }
 if ($ACR_fields['important_flag']) {
 	$ACR_fields['important_flag'] = '#важный';
@@ -109,7 +109,7 @@ if ($_POST['source'] == 'ACR') {
 	}
 	
 	if ($secret == hash('sha256', $_POST['secret'])) {
-		sendVoice($chat_id, $voice_file, $_POST['duration']/1000, $final_report);
+		sendVoice($chat_id, $voice_file, $_POST['duration']%1000, $final_report);
 	}
 	mysqli_free_result($sql);
 }
@@ -136,7 +136,6 @@ function sendMessage($chat_id, $message)
 
 //отправка разговора
 function sendVoice($chat_id, $voice, $duration, $caption) {
-	file_get_contents($GLOBALS['api'].'/sendChatAction?chat_id='.$chat_id.'&action=upload_voice');
 	$filepath = realpath($_FILES['file']['tmp_name']);
 	$post_data = array(
 		'chat_id' => $chat_id,
@@ -149,7 +148,8 @@ function sendVoice($chat_id, $voice, $duration, $caption) {
 	curl_setopt($ch, CURLOPT_POST, 1);
 	curl_setopt($ch, CURLOPT_POSTFIELDS, $post_data);
 	curl_exec($ch);
-	curl_close($ch); 
+	curl_close($ch);
+	file_get_contents($GLOBALS['api'].'/sendChatAction?chat_id='.$chat_id.'&action=upload_voice');
 }
 
 mysqli_close($db);
