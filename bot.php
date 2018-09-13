@@ -88,7 +88,7 @@ if ($ACR_fields['note']) {
 	$ACR_fields['note'] = 'Заметка: '.urldecode($ACR_fields['note']);
 }
 if ($ACR_fields['duration']) {
-	$ACR_fields['duration'] = 'Длительность: '.floor($ACR_fields['duration']%1000%60).' секунд';
+	$ACR_fields['duration'] = 'Длительность: '.floor($ACR_fields['duration']/1000).' секунд';
 }
 if ($ACR_fields['important_flag']) {
 	$ACR_fields['important_flag'] = '#важный';
@@ -109,7 +109,7 @@ if ($_POST['source'] == 'ACR') {
 	}
 	
 	if ($secret == hash('sha256', $_POST['secret'])) {
-		sendVoice($chat_id, $voice_file, $_POST['duration']%1000, $final_report);
+		sendVoice($chat_id, $voice_file, $_POST['duration']/1000, $final_report);
 	}
 	mysqli_free_result($sql);
 }
