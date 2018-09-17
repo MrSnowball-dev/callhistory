@@ -22,17 +22,39 @@ $report = array(); //инициализация отчета
 
 $message = mb_strtolower($message); //этим унифицируем любое входящее сообщение от телеги в нижний регистр для дальнейшей обработки без ебли с кейсами
 
+//инициализация клавиатуры
+$keyboard_buttons = array(array(
+	"One",
+	"Two",
+	"Three"
+));
+$keyboard = array(
+	"keyboard" => $keyboard_buttons,
+	"resize_keyboard" => true,
+	"one_time_keyboard" => true
+);
+	
+
 //--ДАЛЬШЕ ЛОГИКА БОТА--//
+
+if ($message == "One") {
+	sendMessage($chat_id, 'One!!1', $keyboard);
+} else if ($message == "Two") {
+	sendMessage($chat_id, 'Two!22', $keyboard);
+} else if ($message == "Three") {
+	sendMessage($chat_id, 'Three333', $keyboard);
+}
 
 //регистрация+генерация secret для ACR
 if ($message == '/start') {
-	//запрашиваем БД регистрировался ли юзер ранее, чтобы 
+	//запрашиваем БД регистрировался ли юзер ранее, чтобы выдать ему соответствующий secret
 	$query = mysqli_query($db, 'select chat_id from users where chat_id='.$chat_id);
 	while ($sql = mysqli_fetch_object($query)) {
 		$sql_chat_id = $sql->chat_id;
 	}
+	
 	if ($sql_chat_id == $chat_id) {
-		sendMessage($chat_id, "Вы уже были зарегистрированы!\n\nВведите /secret чтобы узнать secret для настройки ACR.");
+		sendMessage($chat_id, "Вы уже были зарегистрированы!\n\nВведите /secret чтобы узнать secret для настройки ACR.", $keyboard);
 	} else {
 		//генерация secret
 		$acr_secret = base_convert($chat_id, 10, 36);
@@ -129,9 +151,12 @@ function deleteMessage($chat_id, $message_id)
 }
 
 //отправка простого сообщения
-function sendMessage($chat_id, $message)
+function sendMessage($chat_id, $message, $keyboard)
 {
-	file_get_contents($GLOBALS['api'].'/sendMessage?chat_id='.$chat_id.'&text='.urlencode($message));
+	if ($keyboard === NULL) {
+		file_get_contents($GLOBALS['api'].'/sendMessage?chat_id='.$chat_id.'&text='.urlencode($message));
+	} else {
+		file_get_contents($GLOBALS['api'].'/sendMessage?chat_id='.$chat_id.'&text='.urlencode($message).'&reply_markup='.json_encode($keyboard));
 }
 
 //отправка разговора
