@@ -20,10 +20,13 @@ $user = $output['message']['from']['username'];
 $user_id = $output['message']['from']['id'];
 $report = array(); //инициализация отчета
 
+$user_lang = '';
+$silent = 0;
 //язфк пользователя, по-умолчанию русский
-$query = mysqli_query($db, 'select language from users where chat_id='.$chat_id);
+$query = mysqli_query($db, 'select language, silent from users where chat_id='.$chat_id);
 while ($sql = mysqli_fetch_object($query)) {
 	$user_lang = $sql->language;
+	$silent = $sql->silent;
 }
 
 //инициализация клавиатуры
@@ -137,6 +140,35 @@ if ($message == '🛠 Bot settings') {
 if ($message == '🆔 Секретный код') {
 	$secret =  base_convert($chat_id, 10, 36);
 	sendFormattedMessage($chat_id, "Ваш секретный код:\n\n```".$secret."```\n\nВведите его в поле secret в настройках Web Hook в ACR. Это идентифицирует вас и именно ваши записи.", 'Markdown', $ru_keyboard);
+}
+
+if ($message == '📳 Тихий режим') {
+	$query = mysqli_query($db, 'select silent from users where chat_id='.$chat_id);
+	while ($sql = mysqli_fetch_object($query)) {
+		$silent = $sql->silent;
+	}
+	if ($silent == 0) {
+		mysqli_query($db, 'update users set silent=1 where chat_id='.$chat_id);
+		sendFormattedMessage($chat_id, "Тихий режим *включен*", 'Markdown', $ru_keyboard);
+	} else {
+		mysqli_query($db, 'update users set silent=0 where chat_id='.$chat_id);
+		sendFormattedMessage($chat_id, "Тихий режим *отключен*", 'Markdown', $ru_keyboard);
+	}
+	mysqli_free_result($sql);
+}
+if ($message == '📳 Silent mode') {
+	$query = mysqli_query($db, 'select silent from users where chat_id='.$chat_id);
+	while ($sql = mysqli_fetch_object($query)) {
+		$silent = $sql->silent;
+	}
+	if ($silent == 0) {
+		mysqli_query($db, 'update users set silent=1 where chat_id='.$chat_id);
+		sendFormattedMessage($chat_id, "Silent mode is *on*", 'Markdown', $ru_keyboard);
+	} else {
+		mysqli_query($db, 'update users set silent=0 where chat_id='.$chat_id);
+		sendFormattedMessage($chat_id, "Silent mode is *off*", 'Markdown', $ru_keyboard);
+	}
+	mysqli_free_result($sql);
 }
 
 if ($message == '💱 Сменить язык') {
