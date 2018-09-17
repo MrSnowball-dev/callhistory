@@ -20,33 +20,57 @@ $user = $output['message']['from']['username'];
 $user_id = $output['message']['from']['id'];
 $report = array(); //инициализация отчета
 
+//язфк пользователя, по-умолчанию русский
+$user_lang = 'ru';
+
 //инициализация клавиатуры
-$keyboard_buttons = array(array(
-	'One',
-	'Two',
-	'Three'
+$lang_keyboard_buttons = array(array(
+	"\uD83C\uDDF7\uD83C\uDDFA Русский",
+	"\uD83C\uDDFA\uD83C\uDDF8 English"
 ));
-$keyboard = array(
-	"keyboard" => $keyboard_buttons,
+$lang_keyboard = array(
+	"keyboard" => $lang_keyboard_buttons,
+	"resize_keyboard" => false,
+	"one_time_keyboard" => true
+);
+//----------------------------------
+$ru_keyboard_buttons = array(array(
+	"Секретный код",
+	"Настройки бота"
+));
+$ru_keyboard = array(
+	"keyboard" => $ru_keyboard_buttons,
 	"resize_keyboard" => true,
 	"one_time_keyboard" => false
 );
-	
+//----------------------------------
+$en_keyboard_buttons = array(array(
+	"Secret code",
+	"Bot settings"
+));
+$en_keyboard = array(
+	"keyboard" => $en_keyboard_buttons,
+	"resize_keyboard" => true,
+	"one_time_keyboard" => false
+);	
 
 //--ДАЛЬШЕ ЛОГИКА БОТА--//
 
-if ($message == 'One') {
-	sendMessage($chat_id, 'One!!1', $keyboard);
+if ($message == "\uD83C\uDDF7\uD83C\uDDFA Русский") {
+	$user_lang = 'ru';
+	sendMessage($chat_id, 'One!!1 '.$user_lang, $ru_keyboard);
 }
-if ($message == 'Two') {
-	sendMessage($chat_id, 'Two!22', $keyboard);
-} 
-if ($message == 'Three') {
-	sendMessage($chat_id, 'Three333', $keyboard);
+if ($message == "\uD83C\uDDFA\uD83C\uDDF8 English") {
+	$user_lang = 'en';
+	sendMessage($chat_id, 'Two!22 '.$user_lang, $en_keyboard);
 }
 
 //регистрация+генерация secret для ACR
 if ($message == '/start') {
+	sendMessage($chat_id, "Choose your language!\n\nВыберите язык!", $lang_keyboard)
+}
+
+if ($message == "strt") {
 	//запрашиваем БД регистрировался ли юзер ранее, чтобы выдать ему соответствующий secret
 	$query = mysqli_query($db, 'select chat_id from users where chat_id='.$chat_id);
 	while ($sql = mysqli_fetch_object($query)) {
@@ -59,12 +83,12 @@ if ($message == '/start') {
 		//генерация secret
 		$acr_secret = base_convert($chat_id, 10, 36);
 		sendFormattedMessage($chat_id, "Привет! Сейчас я покажу как настроить ACR для пользования ботом.\n\nДля начала надо зайти в пункт меню:\n*Настройки*->*Облачные сервисы*->*WebHook* \n\nДалее настроить URL для подключения к боту. Этот бот работает по адресу:\n\n`https://callhistory-bot.herokuapp.com/bot.php` \n\nВ поле *Секрет* надо будет ввести секретный код, который выдаст бот после регистрации.\n\nПосле этого можно выбрать желаемые значения, отправляемые вместе с файлом записи. Они отобразятся в одном сообщении вместе с записью голоса.\n\nЕсли у вас уже есть записи в памяти телефона - выгрузите их все сразу кнопкой в самом низу *\"Выгрузить еще раз\"*. Файлы добавятся в Telegram.\nЕсли у вас не было записей до этого - просто пользуйтесь телефоном как обычно, записи будут выгружены в соответствии с настройками приложения ACR.\n", 'Markdown');
-		mysqli_query($db, "insert into users (chat_id, acr_secret) values (".$chat_id.", SHA2('".$acr_secret."', 256))");
+		mysqli_query($db, "insert into users (chat_id, acr_secret, language) values (".$chat_id.", SHA2('".$acr_secret."', 256)", '".$user_lang."')");
 		sleep(5);
 		sendFormattedMessage($chat_id, "Вы зарегистрированы!\n\nВаш секретный код:\n`".$acr_secret."`\n\nВведите его в поле secret в настройках Web Hook в ACR. Это идентифицирует вас и именно ваши записи.", 'Markdown');
 	}
 	
-	mysqli_free_result($sql);
+	mysqli_free_result($sql);	
 }
 
 if ($message == '/secret') {
