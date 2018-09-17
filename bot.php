@@ -20,14 +20,9 @@ $user = $output['message']['from']['username'];
 $user_id = $output['message']['from']['id'];
 $report = array(); //инициализация отчета
 
-$user_lang = '';
-$silent = 0;
 //язфк пользователя, по-умолчанию русский
-$query = mysqli_query($db, 'select language, silent from users where chat_id='.$chat_id);
-while ($sql = mysqli_fetch_object($query)) {
-	$user_lang = $sql->language;
-	$silent = $sql->silent;
-}
+$user_lang = 'ru';
+$silent = 0; //тихий режим - по-умолчанию выключен
 
 //инициализация клавиатуры
 $lang_keyboard_buttons = array(array(
@@ -238,10 +233,11 @@ if ($_POST['source'] == 'ACR') {
 	while ($sql = mysqli_fetch_object($query)) {
 		$chat_id = $sql->chat_id;
 		$secret = $sql->acr_secret;
+		$silent = $sql->silent;
 	}
 	
 	if ($secret == hash('sha256', $_POST['secret'])) {
-		sendVoice($chat_id, $voice_file, $_POST['duration']/1000, $final_report);
+		sendVoice($chat_id, $voice_file, $_POST['duration']/1000, $final_report, $silent);
 	}
 	mysqli_free_result($sql);
 }
@@ -275,13 +271,14 @@ function sendMessage($chat_id, $message, $keyboard)
 }
 
 //отправка разговора
-function sendVoice($chat_id, $voice, $duration, $caption) {
+function sendVoice($chat_id, $voice, $duration, $caption, $silent_mode) {
 	$filepath = realpath($_FILES['file']['tmp_name']);
 	$post_data = array(
 		'chat_id' => $chat_id,
 		'voice' => new CURLFile($filepath),
 		'duration' => $duration,
-		'caption' => $caption
+		'caption' => $caption,
+		'disable_notification' => $silent_mode
 	);
 	$ch = curl_init();
 	curl_setopt($ch, CURLOPT_URL, $GLOBALS['api'].'/sendVoice');
