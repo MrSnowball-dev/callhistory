@@ -25,12 +25,12 @@ $user_lang = 'ru';
 
 //инициализация клавиатуры
 $lang_keyboard_buttons = array(array(
-	"\uD83C\uDDF7\uD83C\uDDFA Русский",
-	"\uD83C\uDDFA\uD83C\uDDF8 English"
+	"🇷🇺 Русский",
+	"🇺🇸 English"
 ));
 $lang_keyboard = array(
 	"keyboard" => $lang_keyboard_buttons,
-	"resize_keyboard" => false,
+	"resize_keyboard" => true,
 	"one_time_keyboard" => true
 );
 //----------------------------------
@@ -56,11 +56,11 @@ $en_keyboard = array(
 
 //--ДАЛЬШЕ ЛОГИКА БОТА--//
 
-if ($message == "\uD83C\uDDF7\uD83C\uDDFA Русский") {
+if ($message == "🇷🇺 Русский") {
 	$user_lang = 'ru';
 	sendMessage($chat_id, 'One!!1 '.$user_lang, $ru_keyboard);
 }
-if ($message == "\uD83C\uDDFA\uD83C\uDDF8 English") {
+if ($message == "🇺🇸 English") {
 	$user_lang = 'en';
 	sendMessage($chat_id, 'Two!22 '.$user_lang, $en_keyboard);
 }
