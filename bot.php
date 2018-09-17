@@ -24,14 +24,14 @@ $message = mb_strtolower($message); //этим унифицируем любое
 
 //инициализация клавиатуры
 $keyboard_buttons = array(array(
-	"One",
-	"Two",
-	"Three"
+	'One',
+	'Two',
+	'Three'
 ));
 $keyboard = array(
 	"keyboard" => $keyboard_buttons,
 	"resize_keyboard" => true,
-	"one_time_keyboard" => true
+	"one_time_keyboard" => false
 );
 	
 
