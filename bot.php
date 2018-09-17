@@ -37,11 +37,13 @@ $keyboard = array(
 
 //--ДАЛЬШЕ ЛОГИКА БОТА--//
 
-if ($message == "One") {
+if ($message == 'One') {
 	sendMessage($chat_id, 'One!!1', $keyboard);
-} else if ($message == "Two") {
+}
+if ($message == 'Two') {
 	sendMessage($chat_id, 'Two!22', $keyboard);
-} else if ($message == "Three") {
+} 
+if ($message == 'Three') {
 	sendMessage($chat_id, 'Three333', $keyboard);
 }
 
