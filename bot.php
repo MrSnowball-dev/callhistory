@@ -21,7 +21,10 @@ $user_id = $output['message']['from']['id'];
 $report = array(); //инициализация отчета
 
 //язфк пользователя, по-умолчанию русский
-$user_lang = 'ru';
+$query = mysqli_query($db, 'select language from users where chat_id='.$chat_id);
+while ($sql = mysqli_fetch_object($query)) {
+	$user_lang = $sql->language;
+}
 
 //инициализация клавиатуры
 $lang_keyboard_buttons = array(array(
@@ -162,29 +165,31 @@ $ACR_fields = array(
 );
 
 //форматируем входные данные (если они есть)
-if ($_POST['direction'] == 1) {
-	$ACR_fields['direction'] = 'Исходящий';
-} else if ($_POST['direction'] == 0){
-	$ACR_fields['direction'] = 'Входящий';
-}
+if ($user_lang = 'ru') {
+	if ($_POST['direction'] == 1) {
+		$ACR_fields['direction'] = 'Исходящий';
+	} else if ($_POST['direction'] == 0){
+		$ACR_fields['direction'] = 'Входящий';
+	}
 
-if ($ACR_fields['date']) {
-	$ACR_fields['date'] = 'Дата: '.$ACR_fields['date'];
-}
-if ($ACR_fields['phone']) {
-	$ACR_fields['phone'] = 'Номер: '.urldecode($ACR_fields['phone']);
-}
-if ($ACR_fields['contact']) {
-	$ACR_fields['contact'] = 'Имя контакта: '.urldecode($ACR_fields['contact']);
-}
-if ($ACR_fields['note']) {
-	$ACR_fields['note'] = 'Заметка: '.urldecode($ACR_fields['note']);
-}
-if ($ACR_fields['duration']) {
-	$ACR_fields['duration'] = 'Длительность: '.floor($ACR_fields['duration']).' секунд';
-}
-if ($ACR_fields['important_flag']) {
-	$ACR_fields['important_flag'] = '#важный';
+	if ($ACR_fields['date']) {
+		$ACR_fields['date'] = 'Дата: '.$ACR_fields['date'];
+	}
+	if ($ACR_fields['phone']) {
+		$ACR_fields['phone'] = 'Номер: '.urldecode($ACR_fields['phone']);
+	}
+	if ($ACR_fields['contact']) {
+		$ACR_fields['contact'] = 'Имя контакта: '.urldecode($ACR_fields['contact']);
+	}
+	if ($ACR_fields['note']) {
+		$ACR_fields['note'] = 'Заметка: '.urldecode($ACR_fields['note']);
+	}
+	if ($ACR_fields['duration']) {
+		$ACR_fields['duration'] = 'Длительность: '.floor($ACR_fields['duration']).' секунд';
+	}
+	if ($ACR_fields['important_flag']) {
+		$ACR_fields['important_flag'] = '#важный';
+	}
 }
 
 //чистим выключенные параметры (не будем их отсылать с отчетом)
