@@ -130,6 +130,9 @@ if ($message == "🇷🇺 Русский") {
 if ($message == '🛠 Настройки бота') {
 	sendFormattedMessage($chat_id, "📳 *Тихий режим*\nЭта настройка позволит получать записи разговоров без уведомлений.\n\n🤔 *Помощь в настройке*\nПросмотрите начальное сообщение чтобы настроить ACR заново.", 'Markdown', $ru_settings_keyboard);
 }
+if ($message == '🛠 Bot settings') {
+	sendFormattedMessage($chat_id, "📳 *Silent mode*\nThis setting will switch notifications on and off when you receive your recording.\n\n🤔 *Setup help*\nSee starting message to set up ACR again.", 'Markdown', $en_settings_keyboard);
+}
 
 if ($message == '🆔 Секретный код') {
 	$secret =  base_convert($chat_id, 10, 36);
@@ -140,7 +143,6 @@ if ($message == '💱 Сменить язык') {
 	mysqli_query($db, "update users set language='en' where chat_id=".$chat_id);
 	sendFormattedMessage($chat_id, "Language changed!", 'Markdown', $en_keyboard);
 }
-
 if ($message == '💱 Change language') {
 	mysqli_query($db, "update users set language='ru' where chat_id=".$chat_id);
 	sendFormattedMessage($chat_id, "Язык изменен!", 'Markdown', $ru_keyboard);
