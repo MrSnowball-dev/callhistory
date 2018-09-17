@@ -20,8 +20,6 @@ $user = $output['message']['from']['username'];
 $user_id = $output['message']['from']['id'];
 $report = array(); //инициализация отчета
 
-$message = mb_strtolower($message); //этим унифицируем любое входящее сообщение от телеги в нижний регистр для дальнейшей обработки без ебли с кейсами
-
 //инициализация клавиатуры
 $keyboard_buttons = array(array(
 	'One',
