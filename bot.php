@@ -67,7 +67,7 @@ if ($message == "\uD83C\uDDFA\uD83C\uDDF8 English") {
 
 //регистрация+генерация secret для ACR
 if ($message == '/start') {
-	sendMessage($chat_id, "Choose your language!\n\nВыберите язык!", $lang_keyboard)
+	sendMessage($chat_id, "Choose your language!\n\nВыберите язык!", $lang_keyboard);
 }
 
 if ($message == "strt") {
