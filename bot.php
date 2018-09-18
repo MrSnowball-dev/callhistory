@@ -160,10 +160,10 @@ if ($message == '📳 Silent mode') {
 	}
 	if ($silent == 0) {
 		mysqli_query($db, 'update users set silent=1 where chat_id='.$chat_id);
-		sendFormattedMessage($chat_id, "Silent mode is *on*", 'Markdown', $ru_keyboard);
+		sendFormattedMessage($chat_id, "Silent mode is *on*", 'Markdown', $en_keyboard);
 	} else {
 		mysqli_query($db, 'update users set silent=0 where chat_id='.$chat_id);
-		sendFormattedMessage($chat_id, "Silent mode is *off*", 'Markdown', $ru_keyboard);
+		sendFormattedMessage($chat_id, "Silent mode is *off*", 'Markdown', $en_keyboard);
 	}
 	mysqli_free_result($sql);
 }
