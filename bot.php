@@ -186,7 +186,7 @@ if ($message == '🤔 Помощь в настройке' || $message == '🤔 S
 //кладем данные из ACR в массив параметров
 $ACR_fields = array(
 	"date" => date('d.m.Y, H:i:s', $_POST['date']),
-	"duration" => $_POST['duration']%1000,
+	"duration" => round($_POST['duration']/1000),
 	"important_flag" => $_POST['important'],
 	"note" => $_POST['note'],
 	"phone" => $_POST['phone'],
@@ -194,7 +194,7 @@ $ACR_fields = array(
 );
 
 //форматируем входные данные (если они есть)
-if ($user_lang = 'ru') {
+if ($user_lang == 'ru') {
 	if ($_POST['direction'] == 1) {
 		$ACR_fields['direction'] = 'Исходящий';
 	} else if ($_POST['direction'] == 0){
@@ -214,7 +214,7 @@ if ($user_lang = 'ru') {
 		$ACR_fields['note'] = 'Заметка: '.urldecode($ACR_fields['note']);
 	}
 	if ($ACR_fields['duration']) {
-		$ACR_fields['duration'] = 'Длительность: '.floor($ACR_fields['duration']).' секунд';
+		$ACR_fields['duration'] = 'Длительность: '.$ACR_fields['duration'].' секунд';
 	}
 	if ($ACR_fields['important_flag']) {
 		$ACR_fields['important_flag'] = '#важный';
@@ -237,7 +237,7 @@ if ($_POST['source'] == 'ACR') {
 	}
 	
 	if ($secret == hash('sha256', $_POST['secret'])) {
-		sendVoice($chat_id, $voice_file, $_POST['duration']/1000, $final_report, $silent);
+		sendVoice($chat_id, $voice_file, round($_POST['duration']/1000), $final_report, $silent);
 	}
 	mysqli_free_result($sql);
 }
@@ -272,6 +272,11 @@ function sendMessage($chat_id, $message, $keyboard)
 
 //отправка разговора
 function sendVoice($chat_id, $voice, $duration, $caption, $silent_mode) {
+	if ($silent_mode == 0) {
+		$silent_mode = FALSE;
+	} else {
+		$silent_mode = TRUE;
+	}
 	$filepath = realpath($_FILES['file']['tmp_name']);
 	$post_data = array(
 		'chat_id' => $chat_id,
