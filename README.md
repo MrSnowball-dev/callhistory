@@ -1,5 +1,5 @@
 # @callhistory_bot
-Call log and recordings for ACR and Telegram
+Call log and recordings for ACR and Telegram. For this to work you should use ACR Unchained version, since official Google Play apk do not allow call log permission anymore.
 
 # Usage
 You can clone this and use with your own bot or DB or whatever.
