@@ -267,10 +267,11 @@ if ($_POST['source'] == 'ACR') {
 		$secret = $sql->acr_secret;
 		$silent = $sql->silent;
 	}
-	
+	sendMessage($chat_id, 'UNO');
 	if ($secret == hash('sha256', $_POST['secret'])) {
 		sendVoice($chat_id, $voice_file, round($_POST['duration']/1000), $final_report, $silent);
 	}
+	sendMessage($chat_id, 'DOS');
 	mysqli_free_result($sql);
 }
 
