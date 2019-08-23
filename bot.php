@@ -256,7 +256,7 @@ if ($user_lang == 'en') {
 //чистим выключенные параметры (не будем их отсылать с отчетом)
 $report = array_filter($ACR_fields);
 $final_report = implode("\n", $report);
-
+sendMessage($chat_id, 'UNO');
 //получили что-то от ACR? отправляем запись!
 if ($_POST['source'] == 'ACR') {
 	$voice_file = $_FILES['file'];
@@ -274,7 +274,7 @@ if ($_POST['source'] == 'ACR') {
 	sendMessage($chat_id, 'DOS');
 	mysqli_free_result($sql);
 }
-
+sendMessage($chat_id, 'DOS');
 //----------------------------------------------------------------------------------------------------------------------------------//
 
 //отправка форматированного сообщения
