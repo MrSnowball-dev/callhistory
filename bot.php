@@ -197,7 +197,7 @@ if ($message == '/givemeid') {
 }
 
 if ($message == '/notify') {
-	$query = mysqli_query($db, 'select chat_id from users);
+	$query = mysqli_query($db, 'select chat_id from users');
 	while ($sql = mysqli_fetch_assoc($query)) {
 		$notify_list[] = $sql;
 	}
