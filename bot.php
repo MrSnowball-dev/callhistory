@@ -97,7 +97,7 @@ if ($message == '/start') {
 if ($message == '/notify') {
 	$notify_list = [];
 	$query = mysqli_query($db, 'select chat_id from users');
-	while ($sql = mysqli_fetch_assoc($query)) {
+	while ($sql = mysqli_fetch_array($query)) {
 		$notify_list = $sql;
 	}
 	sendMessage($chat_id, $notify_list[1], NULL);
