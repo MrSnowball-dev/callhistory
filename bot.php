@@ -95,12 +95,14 @@ if ($message == '/start') {
 }
 
 if ($message == '/notify') {
-	$notify_list = [];
-	$query = mysqli_query($db, 'select chat_id from users');
-	while ($sql = mysqli_fetch_array($query)) {
-		$notify_list = $sql;
+	$query = mysqli_query($db, 'select chat_id, language from users');
+	while($sql = mysqli_fetch_object($query)) {
+		$listp[] = $sql->chat_id;
 	}
-	sendMessage($chat_id, $notify_list[1], NULL);
+
+	foreach ($listp as $id) {
+		sendFormattedMessage($id, "Привет!\nВ последнее время могли быть перебои в работе бота, я это исправил :)\nВажная информация: для продолжения работы бота необходимо оставаться на версии приложения ACR 31!\nИначе записи перестанут загружаться сюда.\n\n\nHello!\nRecently you may have noticed the bot behaving incorrectly, I fixed that for now :)\n*Important notice:* to use the bot you HAVE to keep version of ACR of 31 or lower!\nOtherwise your recordings won't be uploaded here.\n\nYours, @mrsnowball", 'Markdown', NULL);
+	}
 	mysqli_free_result($sql);
 }
 
