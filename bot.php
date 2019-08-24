@@ -2,10 +2,10 @@
 //ini_set('display_errors', 1);
 
 $tg_bot_token = '503700120:AAHfh-GIFkJDgmRX2RljtFc8pgvnAHgyw5o';
-$db_host = 'acrdb.cwsdwm2g2dle.eu-central-1.rds.amazonaws.com';
-$db_username = 'admin';
-$db_pass = 'adminium';
-$db_schema = 'acr';
+$db_host = 'eu-cdbr-west-02.cleardb.net';
+$db_username = 'b70a1c22756565';
+$db_pass = '6c429cd3';
+$db_schema = 'heroku_18de73b74f8039e';
 
 $token = $tg_bot_token;
 $api = 'https://api.telegram.org/bot'.$token;
@@ -194,6 +194,15 @@ if ($message == '💱 Change language') {
 if ($message == '/givemeid') {
 	sendMessage($chat_id, $chat_id.' | '.$user, NULL);
 	echo "Chat ID given";
+}
+
+if ($message == '/notify') {
+	$query = mysqli_query($db, 'select chat_id from users);
+	while ($sql = mysqli_fetch_assoc($query)) {
+		$notify_list[] = $sql;
+	}
+	sendMessage($chat_id, $notify_list[], NULL);
+	mysqli_free_result($sql);
 }
 
 if ($message == '🤔 Помощь в настройке') {
