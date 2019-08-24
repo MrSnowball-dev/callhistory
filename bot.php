@@ -192,7 +192,7 @@ if ($message == '💱 Change language') {
 }
 
 if ($message == '/givemeid') {
-	sendMessage($chat_id, $chat_id.' | '.$user);
+	sendMessage($chat_id, $chat_id.' | '.$user, NULL);
 	echo "Chat ID given";
 }
 
