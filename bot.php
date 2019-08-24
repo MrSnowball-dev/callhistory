@@ -1,7 +1,11 @@
 <?php
+//ini_set('display_errors', 1);
 
-include 'config.php';
-require_once 'vendor/autoload.php';
+$tg_bot_token = '503700120:AAHfh-GIFkJDgmRX2RljtFc8pgvnAHgyw5o';
+$db_host = 'acrdb.cwsdwm2g2dle.eu-central-1.rds.amazonaws.com';
+$db_username = 'admin';
+$db_pass = 'adminium';
+$db_schema = 'acr';
 
 $token = $tg_bot_token;
 $api = 'https://api.telegram.org/bot'.$token;
@@ -11,13 +15,20 @@ $output = json_decode($input, TRUE); //сюда приходят все запр
 
 //соединение с БД
 $db = mysqli_connect($db_host, $db_username, $db_pass, $db_schema);
+if (mysqli_connect_errno()) echo "Failed to connect to MySQL: " . mysqli_connect_error();
+	else echo "MySQL connect successful.\n";
+
+if ($check = mysqli_query($db, 'select * from users')) {
+	$count = mysqli_num_rows($check);
+	echo "There is $count records in DB.\n\n";
+	mysqli_free_result($check);
+}
 
 //телеграмные события
 $chat_id = $output['message']['chat']['id']; //отделяем id чата, откуда идет обращение к боту
 $message = $output['message']['text']; //сам текст сообщения
 $user = $output['message']['from']['username'];
 $report = array(); //инициализация отчета
-
 //язык пользователя, по-умолчанию русский
 $user_lang = 'ru';
 $silent = 0; //тихий режим - по-умолчанию выключен
@@ -74,6 +85,9 @@ $en_settings_keyboard = array(
 );
 
 //--ДАЛЬШЕ ЛОГИКА БОТА--//
+
+echo "Init successful";
+echo "";
 
 //регистрация+генерация secret для ACR
 if ($message == '/start') {
@@ -179,6 +193,7 @@ if ($message == '💱 Change language') {
 
 if ($message == '/givemeid') {
 	sendMessage($chat_id, $chat_id.' | '.$user);
+	echo "Chat ID given";
 }
 
 if ($message == '🤔 Помощь в настройке') {
@@ -189,78 +204,82 @@ if ($message == '🤔 Setup help') {
 }
 
 //кладем данные из ACR в массив параметров
-$ACR_fields = array(
-	"date" => date('d.m.Y, H:i:s', $_POST['date']),
-	"duration" => formatSeconds($_POST['duration']/1000),
-	"important_flag" => $_POST['important'],
-	"note" => $_POST['note'],
-	"phone" => $_POST['phone'],
-	"contact" => $_POST['contact']
-);
+	$ACR_fields = array(
+		"date" => date('d.m.Y, H:i:s', $_POST['date']),
+		"duration" => formatSeconds($_POST['duration']/1000),
+		"important_flag" => $_POST['important'],
+		"note" => $_POST['note'],
+		"phone" => $_POST['phone'],
+		"contact" => $_POST['contact']
+	);
 
-//форматируем входные данные (если они есть)
-if ($user_lang == 'ru') {
-	if ($_POST['direction'] == 1) {
-		$ACR_fields['direction'] = 'Исходящий';
-	} else if ($_POST['direction'] == 0){
-		$ACR_fields['direction'] = 'Входящий';
-	}
+	//форматируем входные данные (если они есть)
+	if ($user_lang == 'ru') {
+		if ($_POST['direction'] == 1) {
+			$ACR_fields['direction'] = 'Исходящий';
+		} else if ($_POST['direction'] == 0){
+			$ACR_fields['direction'] = 'Входящий';
+		}
 
-	if ($ACR_fields['date']) {
-		$ACR_fields['date'] = 'Дата: '.$ACR_fields['date'];
-	}
-	if ($ACR_fields['phone']) {
-		$ACR_fields['phone'] = 'Номер: '.urldecode($ACR_fields['phone']);
-	}
-	if ($ACR_fields['contact']) {
-		$ACR_fields['contact'] = 'Имя контакта: '.urldecode($ACR_fields['contact']);
-	}
-	if ($ACR_fields['note']) {
-		$ACR_fields['note'] = 'Заметка: '.urldecode($ACR_fields['note']);
-	}
-	if ($ACR_fields['duration']) {
-		$ACR_fields['duration'] = 'Длительность: '.$ACR_fields['duration'];
-	}
-	if ($ACR_fields['important_flag']) {
-		$ACR_fields['important_flag'] = '#важный';
-	}
-}
-
-if ($user_lang == 'en') {
-	if ($_POST['direction'] == 1) {
-		$ACR_fields['direction'] = 'Outgoing';
-	} else if ($_POST['direction'] == 0){
-		$ACR_fields['direction'] = 'Incoming';
+		if ($ACR_fields['date']) {
+			$ACR_fields['date'] = 'Дата: '.$ACR_fields['date'];
+		}
+		if ($ACR_fields['phone']) {
+			$ACR_fields['phone'] = 'Номер: '.urldecode($ACR_fields['phone']);
+		}
+		if ($ACR_fields['contact']) {
+			$ACR_fields['contact'] = 'Имя контакта: '.urldecode($ACR_fields['contact']);
+		}
+		if ($ACR_fields['note']) {
+			$ACR_fields['note'] = 'Заметка: '.urldecode($ACR_fields['note']);
+		}
+		if ($ACR_fields['duration']) {
+			$ACR_fields['duration'] = 'Длительность: '.$ACR_fields['duration'];
+		}
+		if ($ACR_fields['important_flag']) {
+			$ACR_fields['important_flag'] = '#важный';
+		}
 	}
 
-	if ($ACR_fields['date']) {
-		$ACR_fields['date'] = 'Date: '.$ACR_fields['date'];
-	}
-	if ($ACR_fields['phone']) {
-		$ACR_fields['phone'] = 'Phone number: '.urldecode($ACR_fields['phone']);
-	}
-	if ($ACR_fields['contact']) {
-		$ACR_fields['contact'] = 'Contact name: '.urldecode($ACR_fields['contact']);
-	}
-	if ($ACR_fields['note']) {
-		$ACR_fields['note'] = 'Note: '.urldecode($ACR_fields['note']);
-	}
-	if ($ACR_fields['duration']) {
-		$ACR_fields['duration'] = 'Duration: '.$ACR_fields['duration'];
-	}
-	if ($ACR_fields['important_flag']) {
-		$ACR_fields['important_flag'] = '#important';
-	}
-}
+	if ($user_lang == 'en') {
+		if ($_POST['direction'] == 1) {
+			$ACR_fields['direction'] = 'Outgoing';
+		} else if ($_POST['direction'] == 0){
+			$ACR_fields['direction'] = 'Incoming';
+		}
 
-//чистим выключенные параметры (не будем их отсылать с отчетом)
-$report = array_filter($ACR_fields);
-$final_report = implode("\n", $report);
+		if ($ACR_fields['date']) {
+			$ACR_fields['date'] = 'Date: '.$ACR_fields['date'];
+		}
+		if ($ACR_fields['phone']) {
+			$ACR_fields['phone'] = 'Phone number: '.urldecode($ACR_fields['phone']);
+		}
+		if ($ACR_fields['contact']) {
+			$ACR_fields['contact'] = 'Contact name: '.urldecode($ACR_fields['contact']);
+		}
+		if ($ACR_fields['note']) {
+			$ACR_fields['note'] = 'Note: '.urldecode($ACR_fields['note']);
+		}
+		if ($ACR_fields['duration']) {
+			$ACR_fields['duration'] = 'Duration: '.$ACR_fields['duration'];
+		}
+		if ($ACR_fields['important_flag']) {
+			$ACR_fields['important_flag'] = '#important';
+		}
+	}
+
+	//чистим выключенные параметры (не будем их отсылать с отчетом)
+	$report = array_filter($ACR_fields);
+	$final_report = implode("\n", $report);
+
 
 //получили что-то от ACR? отправляем запись!
 if ($_POST['source'] == 'ACR') {
 	$voice_file = $_FILES['file'];
+	echo "Got ACR Record...";
+	echo "";
 	
+	echo "Checking secret...";
 	$query = mysqli_query($db, "select * from users where acr_secret=SHA2('".$_POST['secret']."', 256)");
 	while ($sql = mysqli_fetch_object($query)) {
 		$chat_id = $sql->chat_id;
@@ -270,6 +289,11 @@ if ($_POST['source'] == 'ACR') {
 	
 	if ($secret == hash('sha256', $_POST['secret'])) {
 		sendVoice($chat_id, $voice_file, round($_POST['duration']/1000), $final_report, $silent);
+		echo "Secret good, voice sent.";
+		echo "";
+	} else {
+		echo "Secret failed! Please check credentials.";
+		echo "";
 	}
 	
 	mysqli_free_result($sql);
@@ -345,4 +369,5 @@ function sendVoice($chat_id, $voice, $duration, $caption, $silent_mode) {
 }
 
 mysqli_close($db);
+echo "End script."
 ?>
