@@ -94,6 +94,16 @@ if ($message == '/start') {
 	sendMessage($chat_id, "Choose your language!\n\nВыберите язык!", $lang_keyboard);
 }
 
+if ($message == '/notify') {
+	$notify_list = [];
+	$query = mysqli_query($db, 'select chat_id from users');
+	while ($sql = mysqli_fetch_assoc($query)) {
+		$notify_list = $sql;
+	}
+	sendMessage($chat_id, $notify_list[1], NULL);
+	mysqli_free_result($sql);
+}
+
 if ($message == "🇺🇸 English") {
 	$user_lang = 'en';
 	$query = mysqli_query($db, 'select chat_id from users where chat_id='.$chat_id);
@@ -194,15 +204,6 @@ if ($message == '💱 Change language') {
 if ($message == '/givemeid') {
 	sendMessage($chat_id, $chat_id.' | '.$user, NULL);
 	echo "Chat ID given";
-}
-
-if ($message == '/notify') {
-	$query = mysqli_query($db, 'select chat_id from users');
-	while ($sql = mysqli_fetch_assoc($query)) {
-		$notify_list[] = $sql;
-	}
-	sendMessage($chat_id, $notify_list[], NULL);
-	mysqli_free_result($sql);
 }
 
 if ($message == '🤔 Помощь в настройке') {
