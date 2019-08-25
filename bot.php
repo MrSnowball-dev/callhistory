@@ -1,7 +1,7 @@
 <?php
-//ini_set('display_errors', 1);
-require_once '/vendor/autoload.php';
+ini_set('display_errors', 1);
 include 'config.php';
+require_once 'vendor/autoload.php';
 
 $token = $tg_bot_token;
 $api = 'https://api.telegram.org/bot'.$token;
