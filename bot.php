@@ -263,6 +263,8 @@ if ($message == '🤔 Setup help') {
 	sendFormattedMessage($chat_id, "Hello there! I will explain to you how to set up ACR so it will send recordings here.\n\nFirst, you have to go to ACR Web Hook settings:\n*Settings*->*Cloud services*->*Web Hook* \n\nNext, specify a URL. This bot works on this URL (just copy that and paste in the URL field):\n\n`https://callhistory-bot.herokuapp.com/bot.php` \n\nIn *Secret* field you have to enter secret code which is available by the button.\n\nLast, you can choose whatever parameters you want to be uploaded with the recording file. They will show up under recording in one message.\n\nIf you have recordings files already - upload them all for once by clicking the button in ACR *\"Upload again\"*. Files will be uploaded to Telegram automatically.\nIf you hadn't any recordings - just make calls as usual, recordings will be uploaded according to ACR settings.\n", 'Markdown', $en_keyboard);
 }
 
+$ACR_fields = array();
+
 switch ($_POST['source']) {
 	case 'ACR':
 		//кладем данные из ACR в массив параметров
@@ -334,10 +336,6 @@ switch ($_POST['source']) {
 				$ACR_fields['important_flag'] = '#important';
 			}
 		}
-
-		//чистим выключенные параметры (не будем их отсылать с отчетом)
-		$report = array_filter($ACR_fields);
-		$final_report = implode("\n", $report);
 		break;
 	
 	case 'com.nll.acr':
@@ -395,11 +393,13 @@ switch ($_POST['source']) {
 		echo "You are not ACR!\n";
 		break;
 }
-	
+
+//чистим выключенные параметры (не будем их отсылать с отчетом)
+$report = array_filter($ACR_fields);
+$final_report = implode("\n", $report);
 
 //получили что-то от ACR? отправляем запись!
 if ($_POST['source'] == 'ACR' || $_POST['source'] == 'com.nll.acr') {
-	$voice_file = $_FILES['file'];
 	echo "Got ACR Record...";
 	echo "";
 	
@@ -412,7 +412,7 @@ if ($_POST['source'] == 'ACR' || $_POST['source'] == 'com.nll.acr') {
 	}
 	
 	if ($secret == hash('sha256', $_POST['secret'])) {
-		sendVoice($chat_id, $voice_file, round($_POST['duration']/1000), $final_report, $silent);
+		sendVoice($chat_id, round($_POST['duration']/1000), $final_report, $silent);
 		echo "Secret good, voice sent.";
 		echo "";
 	} else {
@@ -460,13 +460,13 @@ function formatSeconds($seconds) {
 }
 
 //отправка разговора
-function sendVoice($chat_id, $voice, $duration, $caption, $silent_mode) {
+function sendVoice($chat_id, $duration, $caption, $silent_mode) {
 	if ($silent_mode == 0) {
 		$silent_mode = FALSE;
 	} else {
 		$silent_mode = TRUE;
 	}
-	$filepath = realpath($voice['tmp_name']);
+	$filepath = realpath($_FILES['file']['tmp_name']);
 	$post_data = array(
 		'chat_id' => $chat_id,
 		'voice' => new CURLFile($filepath),
