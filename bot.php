@@ -340,7 +340,7 @@ switch ($_POST['source']) {
 	case 'com.nll.acr':
 		//кладем данные из ACR в массив параметров
 		$ACR_fields = array(
-			"file_name" => $_POST['file_name'],
+			"file_name" => $_FILES['file_name'],
 			"date" => date('d.m.Y, H:i:s', $_POST['date']),
 			"duration" => formatSeconds($_POST['duration'] / 1000),
 			"note" => $_POST['note']
