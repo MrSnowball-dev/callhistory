@@ -1,11 +1,6 @@
 <?php
 //ini_set('display_errors', 1);
-
-$tg_bot_token = '503700120:AAHfh-GIFkJDgmRX2RljtFc8pgvnAHgyw5o';
-$db_host = 'eu-cdbr-west-02.cleardb.net';
-$db_username = 'b70a1c22756565';
-$db_pass = '6c429cd3';
-$db_schema = 'heroku_18de73b74f8039e';
+include 'config.php';
 
 $token = $tg_bot_token;
 $api = 'https://api.telegram.org/bot'.$token;
@@ -91,7 +86,10 @@ echo "";
 
 //регистрация+генерация secret для ACR
 if ($message == '/start') {
-	sendMessage($chat_id, "Choose your language!\n\nВыберите язык!", $lang_keyboard);
+	sendMessage($chat_id, 
+		"Choose your language!\n\n
+		Выберите язык!", 
+		$lang_keyboard);
 }
 
 if ($message == '/notify') {
@@ -101,7 +99,17 @@ if ($message == '/notify') {
 	}
 
 	foreach ($listp as $id) {
-		sendFormattedMessage($id, "Привет!\nВ последнее время могли быть перебои в работе бота, я это исправил :)\nВажная информация: для продолжения работы бота необходимо оставаться на версии приложения ACR 31!\nИначе записи перестанут загружаться сюда.\n\n\nHello!\nRecently you may have noticed the bot behaving incorrectly, I fixed that for now :)\n*Important notice:* to use the bot you HAVE to keep version of ACR of 31 or lower!\nOtherwise your recordings won't be uploaded here.\n\nYours, @mrsnowball", 'Markdown', NULL);
+		sendFormattedMessage($id, 
+			"Привет!\n
+			В последнее время могли быть перебои в работе бота, я это исправил :)\n
+			Важная информация: для продолжения работы бота необходимо оставаться на версии приложения ACR 31!\n
+			Иначе записи перестанут загружаться сюда.\n\n\n
+
+			Hello!\n
+			Recently you may have noticed the bot behaving incorrectly, I fixed that for now :)\n
+			*Important notice:* to use the bot you HAVE to keep version of ACR of 31 or lower!\n
+			Otherwise your recordings won't be uploaded here.\n\n
+			Yours, @mrsnowball", 'Markdown', NULL);
 	}
 	mysqli_free_result($sql);
 }
@@ -114,14 +122,34 @@ if ($message == "🇺🇸 English") {
 	}
 	
 	if ($sql_chat_id == $chat_id) {
-		sendMessage($chat_id, "You are already registered!\n\nYou can see your secret code by pressing the button below.", $en_keyboard);
+		sendMessage($chat_id, 
+			"You are already registered!\n\n
+			You can see your secret code by pressing the button below.", 
+			$en_keyboard);
 	} else {
 		//генерация secret
 		$acr_secret = base_convert($chat_id, 10, 36);
-		sendFormattedMessage($chat_id, "Hello there! I will explain to you how to set up ACR so it will send recordings here.\n\nFirst, you have to go to ACR Web Hook settings:\n*Settings*->*Cloud services*->*Web Hook* \n\nNext, specify a URL. This bot works on this URL (just copy that and paste in the URL field):\n\n`https://callhistory-bot.herokuapp.com/bot.php` \n\nIn *Secret* field you have to enter secret code which bot will send you after registration (it's automatic).\n\nLast, you can choose whatever parameters you want to be uploaded with the recording file. They will show up under recording in one message.\n\nIf you have recordings files already - upload them all for once by clicking the button in ACR *\"Upload again\"*. Files will be uploaded to Telegram automatically.\nIf you hadn't any recordings - just make calls as usual, recordings will be uploaded according to ACR settings.\n", 'Markdown', $en_keyboard);
+		sendFormattedMessage($chat_id, 
+			"Hello there! I will explain to you how to set up ACR so it will send recordings here.\n\n
+			First, you have to go to ACR Web Hook settings:\n
+			*Settings*->*Cloud services*->*Web Hook* \n\n
+			Next, specify a URL. This bot works on this URL (just copy that and paste in the URL field):\n\n
+			`https://callhistory-bot.herokuapp.com/bot.php` \n\n
+			In *Secret* field you have to enter secret code which bot will send you after registration (it's automatic).\n\n
+			Last, you can choose whatever parameters you want to be uploaded with the recording file. They will show up under recording in one message.\n\n
+			If you have recordings files already - upload them all for once by clicking the button in ACR *\"Upload again\"*. Files will be uploaded to Telegram automatically.\n
+			If you hadn't any recordings - just make calls as usual, recordings will be uploaded according to ACR settings.\n", 
+			'Markdown', 
+			$en_keyboard);
+
 		mysqli_query($db, "insert into users (chat_id, acr_secret, language) values (".$chat_id.", SHA2('".$acr_secret."', 256), '".$user_lang."')");
 		sleep(5);
-		sendFormattedMessage($chat_id, "You have been registered!\n\nYour secret code:\n`".$acr_secret."`\n\nEnter it in SECRET field in ACR Webhook settings page. This will identify you and your recordings.", 'Markdown', $en_keyboard);
+		sendFormattedMessage($chat_id, 
+			"You have been registered!\n\n
+			Your secret code:\n`".$acr_secret."`\n\n
+			Enter it in SECRET field in ACR Webhook settings page. This will identify you and your recordings.", 
+			'Markdown', 
+			$en_keyboard);
 	}
 	
 	mysqli_free_result($sql);
@@ -136,17 +164,36 @@ if ($message == "🇷🇺 Русский") {
 	}
 	
 	if ($sql_chat_id == $chat_id) {
-		sendMessage($chat_id, "Вы уже были зарегистрированы!\n\nВведите /secret чтобы узнать secret для настройки ACR.", $ru_keyboard);
+		sendMessage($chat_id, 
+		"Вы уже были зарегистрированы!\n\n
+		Введите /secret чтобы узнать secret для настройки ACR.", 
+		$ru_keyboard);
 	} else {
 		//генерация secret
 		$acr_secret = base_convert($chat_id, 10, 36);
-		sendFormattedMessage($chat_id, "Привет! Сейчас я покажу как настроить ACR для пользования ботом.\n\nДля начала надо зайти в пункт меню:\n*Настройки*->*Облачные сервисы*->*WebHook* \n\nДалее настроить URL для подключения к боту. Этот бот работает по адресу:\n\n`https://callhistory-bot.herokuapp.com/bot.php` \n\nВ поле *Секрет* надо будет ввести секретный код, который выдаст бот после регистрации.\n\nПосле этого можно выбрать желаемые значения, отправляемые вместе с файлом записи. Они отобразятся в одном сообщении вместе с записью голоса.\n\nЕсли у вас уже есть записи в памяти телефона - выгрузите их все сразу кнопкой в самом низу *\"Выгрузить еще раз\"*. Файлы добавятся в Telegram.\nЕсли у вас не было записей до этого - просто пользуйтесь телефоном как обычно, записи будут выгружены в соответствии с настройками приложения ACR.\n", 'Markdown', $ru_keyboard);
+		sendFormattedMessage($chat_id, 
+			"Привет! Сейчас я покажу как настроить ACR для пользования ботом.\n\n
+			Для начала надо зайти в пункт меню:\n
+			*Настройки*->*Облачные сервисы*->*WebHook* \n\n
+			Далее настроить URL для подключения к боту. Этот бот работает по адресу:\n\n
+			`https://callhistory-bot.herokuapp.com/bot.php` \n\n
+			В поле *Секрет* надо будет ввести секретный код, который выдаст бот после регистрации.\n\n
+			После этого можно выбрать желаемые значения, отправляемые вместе с файлом записи. Они отобразятся в одном сообщении вместе с записью голоса.\n\n
+			Если у вас уже есть записи в памяти телефона - выгрузите их все сразу кнопкой в самом низу *\"Выгрузить еще раз\"*. Файлы добавятся в Telegram.\n
+			Если у вас не было записей до этого - просто пользуйтесь телефоном как обычно, записи будут выгружены в соответствии с настройками приложения ACR.\n", 
+			'Markdown', 
+			$ru_keyboard);
 		mysqli_query($db, "insert into users (chat_id, acr_secret, language) values (".$chat_id.", SHA2('".$acr_secret."', 256), '".$user_lang."')");
 		sleep(5);
-		sendFormattedMessage($chat_id, "Вы зарегистрированы!\n\nВаш секретный код:\n`".$acr_secret."`\n\nВведите его в поле secret в настройках Web Hook в ACR. Это идентифицирует вас и именно ваши записи.", 'Markdown', $ru_keyboard);
+		sendFormattedMessage($chat_id, 
+			"Вы зарегистрированы!\n\n
+			Ваш секретный код:\n`".$acr_secret."`\n\n
+			Введите его в поле secret в настройках Web Hook в ACR. Это идентифицирует вас и именно ваши записи.", 
+			'Markdown', 
+			$ru_keyboard);
 	}
 	
-	mysqli_free_result($sql);	
+	mysqli_free_result($sql);
 }
 
 if ($message == '🛠 Настройки бота') {
@@ -215,78 +262,138 @@ if ($message == '🤔 Setup help') {
 	sendFormattedMessage($chat_id, "Hello there! I will explain to you how to set up ACR so it will send recordings here.\n\nFirst, you have to go to ACR Web Hook settings:\n*Settings*->*Cloud services*->*Web Hook* \n\nNext, specify a URL. This bot works on this URL (just copy that and paste in the URL field):\n\n`https://callhistory-bot.herokuapp.com/bot.php` \n\nIn *Secret* field you have to enter secret code which is available by the button.\n\nLast, you can choose whatever parameters you want to be uploaded with the recording file. They will show up under recording in one message.\n\nIf you have recordings files already - upload them all for once by clicking the button in ACR *\"Upload again\"*. Files will be uploaded to Telegram automatically.\nIf you hadn't any recordings - just make calls as usual, recordings will be uploaded according to ACR settings.\n", 'Markdown', $en_keyboard);
 }
 
-//кладем данные из ACR в массив параметров
-	$ACR_fields = array(
-		"date" => date('d.m.Y, H:i:s', $_POST['date']),
-		"duration" => formatSeconds($_POST['duration']/1000),
-		"important_flag" => $_POST['important'],
-		"note" => $_POST['note'],
-		"phone" => $_POST['phone'],
-		"contact" => $_POST['contact']
-	);
+switch ($_POST['source']) {
+	case 'ACR':
+		//кладем данные из ACR в массив параметров
+		$ACR_fields = array(
+			"date" => date('d.m.Y, H:i:s', $_POST['date']),
+			"duration" => formatSeconds($_POST['duration'] / 1000),
+			"important_flag" => $_POST['important'],
+			"note" => $_POST['note'],
+			"phone" => $_POST['phone'],
+			"contact" => $_POST['contact'],
+			"file_name" => $_POST['acrfilename']
+		);
 
-	//форматируем входные данные (если они есть)
-	if ($user_lang == 'ru') {
-		if ($_POST['direction'] == 1) {
-			$ACR_fields['direction'] = 'Исходящий';
-		} else if ($_POST['direction'] == 0){
-			$ACR_fields['direction'] = 'Входящий';
-		}
-
-		if ($ACR_fields['date']) {
-			$ACR_fields['date'] = 'Дата: '.$ACR_fields['date'];
-		}
-		if ($ACR_fields['phone']) {
-			$ACR_fields['phone'] = 'Номер: '.urldecode($ACR_fields['phone']);
-		}
-		if ($ACR_fields['contact']) {
-			$ACR_fields['contact'] = 'Имя контакта: '.urldecode($ACR_fields['contact']);
-		}
-		if ($ACR_fields['note']) {
-			$ACR_fields['note'] = 'Заметка: '.urldecode($ACR_fields['note']);
-		}
-		if ($ACR_fields['duration']) {
-			$ACR_fields['duration'] = 'Длительность: '.$ACR_fields['duration'];
-		}
-		if ($ACR_fields['important_flag']) {
-			$ACR_fields['important_flag'] = '#важный';
-		}
-	}
-
-	if ($user_lang == 'en') {
-		if ($_POST['direction'] == 1) {
-			$ACR_fields['direction'] = 'Outgoing';
-		} else if ($_POST['direction'] == 0){
-			$ACR_fields['direction'] = 'Incoming';
+		//форматируем входные данные (если они есть)
+		if ($user_lang == 'ru') {
+			if ($_POST['direction'] == 1) {
+				$ACR_fields['direction'] = 'Исходящий';
+			} else if ($_POST['direction'] == 0) {
+				$ACR_fields['direction'] = 'Входящий';
+			}
+			if ($ACR_fields['file_name']) {
+				$ACR_fields['file_name'] = 'Имя файла: ' . $ACR_fields['file_name'];
+			}
+			if ($ACR_fields['date']) {
+				$ACR_fields['date'] = 'Дата: ' . $ACR_fields['date'];
+			}
+			if ($ACR_fields['phone']) {
+				$ACR_fields['phone'] = 'Номер: ' . urldecode($ACR_fields['phone']);
+			}
+			if ($ACR_fields['contact']) {
+				$ACR_fields['contact'] = 'Имя контакта: ' . urldecode($ACR_fields['contact']);
+			}
+			if ($ACR_fields['note']) {
+				$ACR_fields['note'] = 'Заметка: ' . urldecode($ACR_fields['note']);
+			}
+			if ($ACR_fields['duration']) {
+				$ACR_fields['duration'] = 'Длительность: ' . $ACR_fields['duration'];
+			}
+			if ($ACR_fields['important_flag']) {
+				$ACR_fields['important_flag'] = '#важный';
+			}
 		}
 
-		if ($ACR_fields['date']) {
-			$ACR_fields['date'] = 'Date: '.$ACR_fields['date'];
+		if ($user_lang == 'en') {
+			if ($_POST['direction'] == 1) {
+				$ACR_fields['direction'] = 'Outgoing';
+			} else if ($_POST['direction'] == 0) {
+				$ACR_fields['direction'] = 'Incoming';
+			}
+			if ($ACR_fields['file_name']) {
+				$ACR_fields['file_name'] = 'File name: ' . $ACR_fields['file_name'];
+			}
+			if ($ACR_fields['date']) {
+				$ACR_fields['date'] = 'Date: ' . $ACR_fields['date'];
+			}
+			if ($ACR_fields['phone']) {
+				$ACR_fields['phone'] = 'Phone number: ' . urldecode($ACR_fields['phone']);
+			}
+			if ($ACR_fields['contact']) {
+				$ACR_fields['contact'] = 'Contact name: ' . urldecode($ACR_fields['contact']);
+			}
+			if ($ACR_fields['note']) {
+				$ACR_fields['note'] = 'Note: ' . urldecode($ACR_fields['note']);
+			}
+			if ($ACR_fields['duration']) {
+				$ACR_fields['duration'] = 'Duration: ' . $ACR_fields['duration'];
+			}
+			if ($ACR_fields['important_flag']) {
+				$ACR_fields['important_flag'] = '#important';
+			}
 		}
-		if ($ACR_fields['phone']) {
-			$ACR_fields['phone'] = 'Phone number: '.urldecode($ACR_fields['phone']);
-		}
-		if ($ACR_fields['contact']) {
-			$ACR_fields['contact'] = 'Contact name: '.urldecode($ACR_fields['contact']);
-		}
-		if ($ACR_fields['note']) {
-			$ACR_fields['note'] = 'Note: '.urldecode($ACR_fields['note']);
-		}
-		if ($ACR_fields['duration']) {
-			$ACR_fields['duration'] = 'Duration: '.$ACR_fields['duration'];
-		}
-		if ($ACR_fields['important_flag']) {
-			$ACR_fields['important_flag'] = '#important';
-		}
-	}
 
-	//чистим выключенные параметры (не будем их отсылать с отчетом)
-	$report = array_filter($ACR_fields);
-	$final_report = implode("\n", $report);
+		//чистим выключенные параметры (не будем их отсылать с отчетом)
+		$report = array_filter($ACR_fields);
+		$final_report = implode("\n", $report);
+		break;
+	
+	case 'com.nll.acr':
+		//кладем данные из ACR в массив параметров
+		$ACR_fields = array(
+			"file_name" => $_POST['file_name'],
+			"date" => date('d.m.Y, H:i:s', $_POST['date']),
+			"duration" => formatSeconds($_POST['duration'] / 1000),
+			"note" => $_POST['note']
+		);
 
+		//форматируем входные данные (если они есть)
+		if ($user_lang == 'ru') {
+			if ($_POST['direction'] == 1) {
+				$ACR_fields['direction'] = 'Исходящий';
+			} else if ($_POST['direction'] == 0) {
+				$ACR_fields['direction'] = 'Входящий';
+			}
+			if ($ACR_fields['file_name']) {
+				$ACR_fields['file_name'] = 'Имя файла: ' . $ACR_fields['file_name'];
+			}
+			if ($ACR_fields['date']) {
+				$ACR_fields['date'] = 'Дата: ' . $ACR_fields['date'];
+			}
+			if ($ACR_fields['note']) {
+				$ACR_fields['note'] = 'Заметка: ' . urldecode($ACR_fields['note']);
+			}
+			if ($ACR_fields['duration']) {
+				$ACR_fields['duration'] = 'Длительность: ' . $ACR_fields['duration'];
+			}
+		}
+
+		if ($user_lang == 'en') {
+			if ($_POST['direction'] == 1) {
+				$ACR_fields['direction'] = 'Outgoing';
+			} else if ($_POST['direction'] == 0) {
+				$ACR_fields['direction'] = 'Incoming';
+			}
+			if ($ACR_fields['file_name']) {
+				$ACR_fields['file_name'] = 'File name: ' . $ACR_fields['file_name'];
+			}
+			if ($ACR_fields['date']) {
+				$ACR_fields['date'] = 'Date: ' . $ACR_fields['date'];
+			}
+			if ($ACR_fields['note']) {
+				$ACR_fields['note'] = 'Note: ' . urldecode($ACR_fields['note']);
+			}
+			if ($ACR_fields['duration']) {
+				$ACR_fields['duration'] = 'Duration: ' . $ACR_fields['duration'];
+			}
+		}
+		break;
+}
+	
 
 //получили что-то от ACR? отправляем запись!
-if ($_POST['source'] == 'ACR') {
+if ($_POST['source'] == 'ACR' || $_POST['source'] == 'com.nll.acr') {
 	$voice_file = $_FILES['file'];
 	echo "Got ACR Record...";
 	echo "";
@@ -313,8 +420,7 @@ if ($_POST['source'] == 'ACR') {
 //----------------------------------------------------------------------------------------------------------------------------------//
 
 //отправка форматированного сообщения
-function sendFormattedMessage($chat_id, $message, $markup, $keyboard)
-{
+function sendFormattedMessage($chat_id, $message, $markup, $keyboard) {
 	if ($keyboard === NULL) {
 		file_get_contents($GLOBALS['api'].'/sendMessage?chat_id='.$chat_id.'&text='.urlencode($message).'&parse_mode='.$markup);
 	} else {
@@ -322,15 +428,8 @@ function sendFormattedMessage($chat_id, $message, $markup, $keyboard)
 	}
 }
 
-//удаление сообщения
-function deleteMessage($chat_id, $message_id)
-{
-	file_get_contents($GLOBALS['api'].'/deleteMessage?chat_id='.$chat_id.'&message_id='.$message_id);
-}
-
 //отправка простого сообщения
-function sendMessage($chat_id, $message, $keyboard)
-{
+function sendMessage($chat_id, $message, $keyboard) {
 	if ($keyboard === NULL) {
 		file_get_contents($GLOBALS['api'].'/sendMessage?chat_id='.$chat_id.'&text='.urlencode($message));
 	} else {
@@ -338,8 +437,7 @@ function sendMessage($chat_id, $message, $keyboard)
 	}
 }
 
-function formatSeconds($seconds)
-{
+function formatSeconds($seconds) {
   $hours = 0;
   $milliseconds = str_replace("0.", '', $seconds - floor($seconds));
 
@@ -363,7 +461,7 @@ function sendVoice($chat_id, $voice, $duration, $caption, $silent_mode) {
 	} else {
 		$silent_mode = TRUE;
 	}
-	$filepath = realpath($_FILES['file']['tmp_name']);
+	$filepath = realpath($voice['tmp_name']);
 	$post_data = array(
 		'chat_id' => $chat_id,
 		'voice' => new CURLFile($filepath),
