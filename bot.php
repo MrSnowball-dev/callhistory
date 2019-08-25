@@ -82,8 +82,7 @@ $en_settings_keyboard = array(
 
 //--ДАЛЬШЕ ЛОГИКА БОТА--//
 
-echo "Init successful";
-echo "";
+echo "Init successful.\n";
 
 //регистрация+генерация secret для ACR
 if ($message == '/start') {
