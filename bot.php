@@ -100,16 +100,12 @@ if ($message == '/notify') {
 
 	foreach ($listp as $id) {
 		sendFormattedMessage($id, 
-			"Привет!\n
-			В последнее время могли быть перебои в работе бота, я это исправил :)\n
-			Важная информация: для продолжения работы бота необходимо оставаться на версии приложения ACR 31!\n
-			Иначе записи перестанут загружаться сюда.\n\n\n
+			"Привет снова!\n
+			В бота внесены изменения для поддержки новых версий ACR. Однако теперь с записью отправляется меньше данных, имейте это ввиду.\n\n\n
 
-			Hello!\n
-			Recently you may have noticed the bot behaving incorrectly, I fixed that for now :)\n
-			*Important notice:* to use the bot you HAVE to keep version of ACR of 31 or lower!\n
-			Otherwise your recordings won't be uploaded here.\n\n
-			Yours, @mrsnowball", 'Markdown', NULL);
+			Hello again!\n
+			I made changes to the bot for it to work with all ACR versions. But now there are less data being sent along with recording (i.e. lack of contact name), keep that in mind.\n\n
+			If you have any questions: contact @mrsnowball", 'Markdown', NULL);
 	}
 	mysqli_free_result($sql);
 }
@@ -340,7 +336,7 @@ switch ($_POST['source']) {
 	case 'com.nll.acr':
 		//кладем данные из ACR в массив параметров
 		$ACR_fields = array(
-			"file_name" => $_FILES['file']['file_name'],
+			"file_name" => $_POST['file_name'],
 			"date" => date('d.m.Y, H:i:s', $_POST['date']),
 			"duration" => formatSeconds($_POST['duration'] / 1000),
 			"note" => $_POST['note']
